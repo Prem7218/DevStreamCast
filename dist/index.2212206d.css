@@ -1,0 +1,10 @@
+.checkCorrect {
+  display: block;
+}
+
+@media (width >= 360px) and (width <= 768px) {
+  .checkCorrect {
+    display: none;
+  }
+}
+/*# sourceMappingURL=index.2212206d.css.map */
