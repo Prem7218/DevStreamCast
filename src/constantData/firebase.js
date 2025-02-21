@@ -7,7 +7,7 @@ import { getAuth } from "firebase/auth";
 // 1st kOne: AIzaSyBkgYk
 
 // Your web app's Firebase configuration
-// 2nd kTwo: _-xvmF9A
+// 2nd kTwo: -xvmF9A
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "",
@@ -20,7 +20,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// 3rd kThree: _bp7w7PtRoK2OZ23ynoU
+// 3rd kThree: bp7w7PtRoK2OZ23ynoU
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
