@@ -4,11 +4,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+// 1st kOne: AIzaSyBkgYk
 
 // Your web app's Firebase configuration
+// 2nd kTwo: _-xvmF9A
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // apiKey: "AIzaSyBkgYk_-xvmF9A_bp7w7PtRoK2OZ23ynoU",
+  apiKey: "",
   authDomain: "devstreamcast.firebaseapp.com",
   projectId: "devstreamcast",
   storageBucket: "devstreamcast.firebasestorage.app",
@@ -18,6 +20,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+// 3rd kThree: _bp7w7PtRoK2OZ23ynoU
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
