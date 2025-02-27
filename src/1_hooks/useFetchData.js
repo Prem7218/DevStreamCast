@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { cors, devAPI, devAPIEnd, devAPIStart } from '../constantData/url_icons'; 
+import { cors, devAPIEnd, devAPIStart } from '../constantData/url_icons'; 
 
 const useFetchData = () => {
   const [apiData, setApiData] = useState(null);

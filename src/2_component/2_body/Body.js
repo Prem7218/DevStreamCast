@@ -7,6 +7,7 @@ import { cors, devAPIEnd, devAPIStart } from "../../constantData/url_icons";
 import { useLoading } from "../../3_context/loadingContext";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import BodyCardShimmer from "../../BodyCardShimmer";
 
 const Body = () => {
   const data = useFetchData();
@@ -81,6 +82,13 @@ const Body = () => {
     <div className="flex justify-around">
       <div className="hidden md:block lg:block">
         <h2>Side List</h2>
+        <ol>
+          <Link to={"/"}><li>Home</li></Link>
+          <Link to={"/devquizform"} ><li>DevQuizOrm</li></Link>
+          <Link to={"/devleetCode"}><li>DevLeetCode</li></Link>
+          <Link to={"/"}><li>DevRepositerie's</li></Link>
+          <Link to={"/dev-dsa-practice-sheet"}><li>DevDSAPracticeSheet</li></Link>
+        </ol>
       </div>
 
       <div className="min-h-screen w-[65%] p-6">
@@ -113,9 +121,7 @@ const Body = () => {
         ) : (
           <>
             {isLoading && (
-              <div className="flex flex-row text-center text-gray-500 py-4">
-                Loading more Messages...
-              </div>
+              <BodyCardShimmer />
             )}
           </>
         )}

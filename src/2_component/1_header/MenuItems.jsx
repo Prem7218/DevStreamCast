@@ -15,14 +15,14 @@ const MenuItems = ({ isLogin, setLogin, menu }) => {
   };
 
   return (
-    <div className="p-4 bg-gradient-to-br rounded-lg shadow-lg">
-      <div className="flex justify-center items-center gap-2">
+    <div>
+      <div className="flex gap-2">
         {/* Logged-in User Menu Items */}
         {isLogin && (
           <>
             <button
               key={19}
-              className="flex items-center space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-blue-100 transition duration-300"
+              className="flex space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-blue-100 transition duration-300"
             >
               <span className="text-blue-500">{menuItems1[0].icon}</span>
               <span className="text-gray-800 font-medium">
@@ -32,16 +32,17 @@ const MenuItems = ({ isLogin, setLogin, menu }) => {
 
             <button
               onClick={handleMeeting}
-              className="space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-blue-100 transition duration-300"
+              className="flex space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-blue-100 transition duration-300"
             >
-              <span className="text-gray-800 font-medium">Join DevMeet</span>
+              <span className="text-blue-500">{menuItems1[1].icon}</span>
+              <span className="text-gray-800 font-medium">DevMeet</span>
             </button>
           </>
         )}
 
         {/* Home Button */}
         <Link key={8} to={"/"}>
-          <button className="flex items-center space-x-2 p-2 rounded-md bg-white shadow-md hover:bg-blue-200 transition duration-300">
+          <button className="flex space-x-2 p-2 rounded-md bg-white shadow-md hover:bg-blue-200 transition duration-300">
             <span className="text-blue-500">{Home[0].icon}</span>
             <span className="text-gray-900 font-semibold">{Home[0].name}</span>
           </button>
@@ -49,7 +50,7 @@ const MenuItems = ({ isLogin, setLogin, menu }) => {
 
         {/* Main Menu Items */}
         <button
-          className="flex items-center space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-green-100 transition duration-300"
+          className="flex space-x-2 p-2 rounded-md bg-white shadow-sm hover:bg-green-100 transition duration-300"
         >
             <span className="text-green-500">{menuItem[0].icon}</span>
             <span className="text-gray-800 font-medium">{menuItem[0].name}</span>
@@ -59,7 +60,7 @@ const MenuItems = ({ isLogin, setLogin, menu }) => {
         <Link key={9} to={"/authentication/1"}>
           <button
             onClick={handleLoginToggle}
-            className="flex items-center space-x-2 p-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-300 shadow-md"
+            className="flex space-x-2 p-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-300 shadow-md"
           >
             <span>{menu[0].icon}</span>
             <span>{menu[0].name}</span>

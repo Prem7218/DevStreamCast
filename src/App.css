@@ -7,3 +7,53 @@
         display: none;
     }
 }
+
+
+/* Split Container */
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Gutter (Draggable Splitter) */
+.gutter {
+    background-color: #1e1e1e; /* Dark gray to blend subtly */
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Horizontal Splitter Design */
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize; /* Ensures correct resizing cursor */
+    width: 6px; /* Slightly thicker for better interaction */
+    background-color: #333; /* Medium-dark gray for visibility */
+    border-radius: 3px; /* Smooth edges */
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Split Container (Vertical Split) */
+.split-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Gutter (Draggable Splitter) */
+.gutter {
+    background-color: #1e1e1e; /* Dark gray to blend subtly */
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Vertical Splitter Design */
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize; /* Ensures correct resizing cursor */
+    height: 6px; 
+    background-color: #333; 
+    border-radius: 3px; /* Smooth edges */
+    transition: background-color 0.2s ease-in-out;
+    z-index: 30;
+}

@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+  
+/* Split Container */
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Default Gutter Styling */
+.gutter {
+    background-color: #eee; /* Light gray */
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+/* Horizontal Splitter Design */
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize; /* Horizontal resizing cursor */
+    width: 8px; /* Adjust the gutter width */
+}

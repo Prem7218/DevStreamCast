@@ -14,7 +14,7 @@ const ArticleCard = ({
   return (
     <>
       <div 
-        className="bg-white border rounded-lg shadow-md p-5 max-w-4xl w-full sm:w-11/12 mx-auto mt-5 transition-transform transform hover:scale-105 duration-300">
+        className="bg-white border rounded-lg shadow-md p-5 max-w-4xl w-full sm:w-11/12 mx-auto mt-3 transition-transform transform hover:scale-105 duration-300">
         {/* Author Section */}
         <div className="flex items-center mb-4">
           <img

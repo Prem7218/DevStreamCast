@@ -14,10 +14,10 @@ const Header = () => {
 
   return (
     <header className="bg-gradient-to-r from-slate-800 to-blue-400 p-4 shadow-lg text-white w-full">
-      <div className="flex items-center justify-between max-w-full mx-auto">
+      <div className="flex justify-between max-w-full mx-auto">
         {/* Logo Section */}
-        <div className="flex items-center space-x-2">
-          <div className="bg-white text-blue-600 rounded-full p-2">
+        <div className="flex space-x-2">
+          <div className="bg-white text-blue-600 rounded-full p-1 h-10">
             <Globe className="h-8 w-8" />
           </div>
           <h1 className="text-2xl font-bold">DevStreamCast</h1>
@@ -35,7 +35,7 @@ const Header = () => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden md:flex">
           <MenuItems isLogin={isLogin} setLogin={setLogin} menu={menu} />
         </nav>
 
@@ -55,7 +55,7 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-gradient-to-b mt-3 from-slate-800 to-blue-400 p-4 space-y-4 animate-slide-down">
           {/* Mobile Search Bar */}
-          <div className="checkCorrect flex items-center bg-white rounded-lg px-3 py-2">
+          <div className="checkCorrect flex bg-white rounded-lg px-3 py-2">
             <Search
               setSearchTerm={setSearchTerm}
               searchTerm={searchTerm}
@@ -64,7 +64,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Items */}
-          <nav className="flex flex-col space-y-4">
+          <nav className="flex flex-col">
             <MenuItems isLogin={isLogin} setLogin={setLogin} menu={menu} />
           </nav>
         </div>

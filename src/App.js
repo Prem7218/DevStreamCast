@@ -13,19 +13,26 @@ import MeetingForm from "./2_component/2_body/meeting/MeetNow";
 import CreatedMeeting from "./2_component/2_body/meeting/CreatedMeeting";
 import Meeting from "./2_component/2_body/meeting/Meeting";
 import { MeetRecordingProvider } from "./3_context/meetRecordingContext";
+import QuizComponent from "./2_component/2_body/quiz/QuizQnsAns";
+import TechQuizChallenge from "./2_component/2_body/quiz/TechQuizForm/TechQuizChallenge";
+import { QuizDataProvider } from "./3_context/quizDataContext";
+import CodePlatform from "./2_component/2_body/quiz/Code_Platform/CodePlatform";
+import DevDSAPracticeSheet from "./2_component/2_body/quiz/DSA_Sheet_Qns/DevDSASheet";
 
 const AppLayout = () => {
   return (
     <AuthProvider>
       <MeetRecordingProvider>
         <LoadingProvider>
-          <Provider store={appStore}>
-            <div>
-              <Header />
-              <Outlet />
-              <Footer />
-            </div>
-          </Provider>
+          <QuizDataProvider>
+            <Provider store={appStore}>
+              <div>
+                <Header />
+                <Outlet />
+                <Footer />
+              </div>
+            </Provider>
+          </QuizDataProvider>
         </LoadingProvider>
       </MeetRecordingProvider>
     </AuthProvider>
@@ -56,6 +63,22 @@ const AppRouter = createBrowserRouter([
       {
         path: "/meeting/:roomid/:username",
         element: <Meeting />
+      },
+      {
+        path: "/devquizform",
+        element: <TechQuizChallenge />,
+      },
+      {
+        path: "/devquiz",
+        element: <QuizComponent />,
+      },
+      {
+        path: "/devleetCode",
+        element: <CodePlatform />
+      },
+      {
+        path: "/dev-dsa-practice-sheet",
+        element: <DevDSAPracticeSheet />
       }
     ],
     errorElement: <Error />,
