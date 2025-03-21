@@ -8,3 +8,5 @@ const token = generate('my private key', { // Pass your generated private key
 });
 
 console.log(token); // Write JWT to console.
+
+API: 5AFEMtz7H76ejqrMzK1NuwaE Dev.to

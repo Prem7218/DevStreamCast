@@ -18,6 +18,7 @@ import TechQuizChallenge from "./2_component/2_body/quiz/TechQuizForm/TechQuizCh
 import { QuizDataProvider } from "./3_context/quizDataContext";
 import CodePlatform from "./2_component/2_body/quiz/Code_Platform/CodePlatform";
 import DevDSAPracticeSheet from "./2_component/2_body/quiz/DSA_Sheet_Qns/DevDSASheet";
+import Article from "./2_component/2_body/articleCard/Article";
 
 const AppLayout = () => {
   return (
@@ -79,6 +80,10 @@ const AppRouter = createBrowserRouter([
       {
         path: "/dev-dsa-practice-sheet",
         element: <DevDSAPracticeSheet />
+      },
+      {
+        path: "/dev-article/:username",
+        element: <Article />
       }
     ],
     errorElement: <Error />,

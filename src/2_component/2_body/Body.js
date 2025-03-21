@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useFetchData from "../../1_hooks/useFetchData";
-import ArticleCard from "./ArticleCard";
+import ArticleCard from "./articleCard/ArticleCard";
 import { useauthCheck } from "../../3_context/authContext";
 import DevLoginModal from "../../Authentications/DevLoginModal";
 import { cors, devAPIEnd, devAPIStart } from "../../constantData/url_icons";
@@ -19,9 +19,9 @@ const Body = () => {
 
   useEffect(() => {
     // console.log("datas: ", datas);
-    if(datas) setMainArticleData(datas);
+    if (datas) setMainArticleData(datas);
   }, [datas]);
-  
+
   if (!mainArticleData.length === 0) {
     return <h1>Loading...</h1>; // Show a loading message while fetching
   }
@@ -73,9 +73,7 @@ const Body = () => {
   }, [currentIndex, isLoading]);
 
   useEffect(() => {
-    
-      fetchData();
-    
+    fetchData();
   }, [currentIndex]);
 
   return (
@@ -83,11 +81,21 @@ const Body = () => {
       <div className="hidden md:block lg:block">
         <h2>Side List</h2>
         <ol>
-          <Link to={"/"}><li>Home</li></Link>
-          <Link to={"/devquizform"} ><li>DevQuizOrm</li></Link>
-          <Link to={"/devleetCode"}><li>DevLeetCode</li></Link>
-          <Link to={"/"}><li>DevRepositerie's</li></Link>
-          <Link to={"/dev-dsa-practice-sheet"}><li>DevDSAPracticeSheet</li></Link>
+          <Link to={"/"}>
+            <li>Home</li>
+          </Link>
+          <Link to={"/devquizform"}>
+            <li>DevQuizOrm</li>
+          </Link>
+          <Link to={"/devleetCode"}>
+            <li>DevLeetCode</li>
+          </Link>
+          <Link to={"/"}>
+            <li>DevRepositerie's</li>
+          </Link>
+          <Link to={"/dev-dsa-practice-sheet"}>
+            <li>DevDSAPracticeSheet</li>
+          </Link>
         </ol>
       </div>
 
@@ -107,23 +115,17 @@ const Body = () => {
                 style={{ cursor: !isLogin ? "pointer" : "default" }}
               >
                 {isLogin ? (
-                  <Link
-                    to={isLogin ? `https://dev.to/` + articleData?.path : '/'}
-                  >
+                  <Link to={isLogin ? `/dev-article/${articleData?.user?.username}` : "/"}>
                     <ArticleCard {...articleData} />
                   </Link>
-                ) : 
+                ) : (
                   <ArticleCard {...articleData} />
-                }
+                )}
               </div>
             );
           })
         ) : (
-          <>
-            {isLoading && (
-              <BodyCardShimmer />
-            )}
-          </>
+          <>{isLoading && <BodyCardShimmer />}</>
         )}
       </div>
 

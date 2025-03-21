@@ -8,8 +8,8 @@ const QuestionList = ({ DevDSAQuestions, selectedLevel, selectedTopic }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleQnstoDevCode = (topic, question) => {
-    dispatch(addQnsTop({ topic, question }));
+  const handleQnstoDevCode = (topic, question ) => {
+    dispatch(addQnsTop({ topic, question, code: "" }));
     navigate("/devleetCode");
   };
 
@@ -24,7 +24,7 @@ const QuestionList = ({ DevDSAQuestions, selectedLevel, selectedTopic }) => {
           (question, index) => (
             <li
               key={index}
-              onClick={() => handleQnstoDevCode(selectedTopic, question)}
+              onClick={() => handleQnstoDevCode(selectedTopic, question, index)}
               className="flex items-center gap-4 my-2 text-lg text-gray-300 cursor-pointer hover:text-gray-100 transition-all duration-200 p-3 rounded-lg bg-gray-800 hover:bg-gray-700"
             >
               {/* ✅ Checkbox Toggle */}

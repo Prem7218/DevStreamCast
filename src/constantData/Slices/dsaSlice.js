@@ -4,12 +4,14 @@ const dsaSlice = createSlice({
     name: "dsaSheet",
     initialState: {
         topic: null,
-        question: null
+        question: null,
+        code: null,
     },
     reducers: {
         addQnsTop: (state, action) => {
             state.topic = action.payload.topic;
             state.question = action.payload.question;
+            state.code = action.payload.code;
         }
     }
 })

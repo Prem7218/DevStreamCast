@@ -1,10 +1,12 @@
 import { Globe, Home, Info, Mail, PlusCircle } from "lucide-react";
-export const cors = "https://cors-anywhere.herokuapp.com/";
+export const cors = "https://cors-anywhere.herokuapp.com/"; 
+export const DEV_ARTICLE_API = "https://dev.to/api/articles?username=";
 export const devAPIStart=`https://dev.to/search/feed_content?`
 export const devAPIEnd = `&sort_by=hotness_score&sort_direction=desc&approved=&class_name=Article`;
 export const PHOTO_URL = "https://avatars.githubusercontent.com/u/161498035?v=4";
 export const meetingIdFind = "https://api.8x8.vc/external/v1/meetings"; 
 export const GEMINI_API_KEY = "AIzaSyDUKSD5oosg6tG_bj6c2r3bZq-wnKcbZuU";
+export const DEV_API = "5AFEMtz7H76ejqrMzK1NuwaE"; 
 
 export const menuItems1 = [
   { name: "Internet", icon: <Globe /> },

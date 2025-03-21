@@ -6,7 +6,7 @@ const BodyCardShimmer = () => {
 
     for(let i = 0; i < 5; i++) {
         {cards.push(
-            <div className="bg-white border rounded-lg shadow-md p-5 max-w-4xl w-full sm:w-11/12 mx-auto my-3 border-gray-400 animate-pulse">
+            <div key={i} className="bg-white border rounded-lg shadow-md p-5 max-w-4xl w-full sm:w-11/12 mx-auto my-3 border-gray-400 animate-pulse">
                 {/* Header */}
                 <div className="flex items-center space-x-4 mb-4">
                     <div className="w-12 h-12 bg-gray-700 rounded-full"></div>
