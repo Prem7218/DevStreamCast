@@ -1,8 +1,9 @@
 import React from "react";
-import SystemDesignTopics from "./SystemDesignTopics";
 import DSATopics from "./DSATopics";
+import SystemDesignTopics from "./SystemDesignTopics";
 
 const MainSelectTopics = ({
+  selectedTopics,
   setSelectedTopics,
   setIsOpen,
   systemDesignTopics,
@@ -34,12 +35,13 @@ const MainSelectTopics = ({
           onMouseLeave={enableScroll}
         >
           {/* 🔹 DSA Topics */}
-          <DSATopics setSelectedTopics={setSelectedTopics} topics={topics} />
+          <DSATopics selectedTopics={selectedTopics} setSelectedTopics={setSelectedTopics} topics={topics} />
 
           {/* 🔹 System Design Topics */}
           <SystemDesignTopics
             systemDesignTopics={systemDesignTopics}
             setSelectedTopics={setSelectedTopics}
+            selectedTopics={selectedTopics}
           />
         </div>
       )}

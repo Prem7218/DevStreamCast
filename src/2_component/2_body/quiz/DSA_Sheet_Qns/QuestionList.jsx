@@ -4,9 +4,8 @@ import { addQnsTop } from "../../../../constantData/Slices/dsaSlice";
 import { useNavigate } from "react-router-dom";
 
 const QuestionList = ({ DevDSAQuestions, selectedLevel, selectedTopic }) => {
-  
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleQnstoDevCode = (topic, question ) => {
     dispatch(addQnsTop({ topic, question, code: "" }));
@@ -38,4 +37,5 @@ const QuestionList = ({ DevDSAQuestions, selectedLevel, selectedTopic }) => {
   );
 };
 
-export default QuestionList;
+export default QuestionList
+;

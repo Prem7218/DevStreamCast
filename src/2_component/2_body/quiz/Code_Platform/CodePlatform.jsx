@@ -1,13 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import Split from "split.js";
-import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
-import { cpp } from "@codemirror/lang-cpp";
-import { java } from "@codemirror/lang-java";
-import { rust } from "@codemirror/lang-rust";
-import { go } from "@codemirror/lang-go";
-import { sql } from "@codemirror/lang-sql";
-import { html } from "@codemirror/lang-html";
 import {
   model,
   QnsPROMPT1,
@@ -19,13 +10,22 @@ import {
   systemDesignTopics,
   topics,
 } from "../../../../constantData/mock_data";
-import RightPanel from "./rightPanel/RightPanel";
-import LeftPanel from "./leftPanel/LeftPanel";
-import MainSelectTopics from "./MainSelectTopics";
-import TopNavBar from "./TopNavBar";
-import TimerOnNav from "./TimerOnNav";
 import { useSelector } from "react-redux";
 import { Top1Shimmer, Top2Shimmer } from "./topNav/Top1Shimmer";
+import TimerOnNav from "./TimerOnNav";
+import TopNavBar from "./TopNavBar";
+import MainSelectTopics from "./MainSelectTopics";
+import LeftPanel from "./leftPanel/LeftPanel";
+import RightPanel from "./rightPanel/RightPanel";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
+import { java } from "@codemirror/lang-java";
+import { rust } from "@codemirror/lang-rust";
+import { go } from "@codemirror/lang-go";
+import { sql } from "@codemirror/lang-sql";
+import { html } from "@codemirror/lang-html";
+import Split from "split.js";
 
 const CodePlatform = () => {
   const questione = useSelector((store) => store.dsaSheet.question);
@@ -57,6 +57,7 @@ const CodePlatform = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [previousQuestions, setPreviousQuestions] = useState([]);
   const [showPreviousQuestions, setShowPreviousQuestions] = useState(false);
+  // const loggedInUserUID = auth?.currentUser?.uid;
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -115,6 +116,68 @@ const CodePlatform = () => {
 
     fetchQns();
   }, [questione, topic]);
+
+  // Timer Functionality
+  useEffect(() => {
+    let interval;
+    if (isRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setIsRunning(false);
+      alert("Time is up!");
+    }
+    return () => clearInterval(interval);
+  }, [isRunning, timer]);
+
+  useEffect(() => {
+    // First Split: Between Question & Code Panel
+    Split(["#question-panel", "#code-panel"], {
+      sizes: [50, 50],
+      minSize: 30,
+      gutterSize: 8,
+      cursor: "col-resize",
+      elementStyle: (dimension, size, gutterSize) => ({
+        [dimension]: `calc(${size}% - ${gutterSize / 2}px)`,
+      }),
+      gutterStyle: (dimension, gutterSize) => ({
+        [dimension]: `${gutterSize}px`,
+      }),
+    });
+
+    // Second Split: Between Code Editor & Code Review
+    splitInstance.current = Split(["#code-editor", "#code-review"], {
+      sizes: [50, 50], // Default: More space for Code Editor
+      minSize: [0, 0], // Allows full collapse
+      gutterSize: 6, // Matches CSS
+      cursor: "row-resize",
+      direction: "vertical",
+      elementStyle: (dimension, size, gutterSize) => ({
+        [dimension]: `calc(${size}% - ${gutterSize / 2}px)`,
+      }),
+      gutterStyle: (dimension, gutterSize) => ({
+        [dimension]: `${gutterSize}px`,
+      }),
+      onDragEnd: (sizes) => {
+        const [editorSize, reviewSize] = sizes;
+
+        if (splitInstance.current) {
+          if (editorSize < 5) {
+            splitInstance.current.setSizes([0, 100]); // Fully show Code Review
+          } else if (reviewSize < 5) {
+            splitInstance.current.setSizes([100, 0]); // Fully show Code Editor
+          }
+        }
+      },
+    });
+
+    return () => {
+      if (splitInstance.current) {
+        splitInstance.current.destroy(); // Cleanup on unmount
+      }
+    };
+  }, []);
 
   const handleSubmit = async () => {
     if (!checker?.code.trim()) {
@@ -182,81 +245,6 @@ const CodePlatform = () => {
     }
   };
 
-  // Timer Functionality
-  useEffect(() => {
-    let interval;
-    if (isRunning && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setIsRunning(false);
-      alert("Time is up!");
-    }
-    return () => clearInterval(interval);
-  }, [isRunning, timer]);
-
-  // Handle Selection.
-
-  // const handleSelection = (e) => {
-  //   if (selectedTopics) {
-  //     setSavedAnswers((prev) => ({
-  //       ...prev,
-  //       []: selectedTopics, // Always update to latest selection
-  //     }));
-  //   }
-  // }
-
-  // Apply Split.js for Resizable Panels
-
-  useEffect(() => {
-    // First Split: Between Question & Code Panel
-    Split(["#question-panel", "#code-panel"], {
-      sizes: [50, 50],
-      minSize: 30,
-      gutterSize: 8,
-      cursor: "col-resize",
-      elementStyle: (dimension, size, gutterSize) => ({
-        [dimension]: `calc(${size}% - ${gutterSize / 2}px)`,
-      }),
-      gutterStyle: (dimension, gutterSize) => ({
-        [dimension]: `${gutterSize}px`,
-      }),
-    });
-
-    // Second Split: Between Code Editor & Code Review
-    splitInstance.current = Split(["#code-editor", "#code-review"], {
-      sizes: [50, 50], // Default: More space for Code Editor
-      minSize: [0, 0], // Allows full collapse
-      gutterSize: 6, // Matches CSS
-      cursor: "row-resize",
-      direction: "vertical",
-      elementStyle: (dimension, size, gutterSize) => ({
-        [dimension]: `calc(${size}% - ${gutterSize / 2}px)`,
-      }),
-      gutterStyle: (dimension, gutterSize) => ({
-        [dimension]: `${gutterSize}px`,
-      }),
-      onDragEnd: (sizes) => {
-        const [editorSize, reviewSize] = sizes;
-
-        if (splitInstance.current) {
-          if (editorSize < 5) {
-            splitInstance.current.setSizes([0, 100]); // Fully show Code Review
-          } else if (reviewSize < 5) {
-            splitInstance.current.setSizes([100, 0]); // Fully show Code Editor
-          }
-        }
-      },
-    });
-
-    return () => {
-      if (splitInstance.current) {
-        splitInstance.current.destroy(); // Cleanup on unmount
-      }
-    };
-  }, []);
-
   return (
     <div className={`min-h-screen ${"bg-gray-900 text-white"}`}>
       {/* 🔹 Top Navigation Bar */}
@@ -296,6 +284,7 @@ const CodePlatform = () => {
                 systemDesignTopics={systemDesignTopics}
                 setIsOpen={setIsOpen}
                 isOpen={isOpen}
+                selectedTopics={selectedTopics}
               />
             </div>
           </div>
@@ -343,3 +332,41 @@ const CodePlatform = () => {
 };
 
 export default CodePlatform;
+
+// useEffect(() => {
+//   if (!loggedInUserUID) return;
+
+//   const updateQuestionDetails = async () => {
+//     try {
+//       const userRef = ref(
+//         database,
+//         `users/${loggedInUserUID}/solvedQuestions`
+//       );
+//       const snapshot = await get(userRef);
+
+//       let updatedQnsDetails = {};
+
+//       if (snapshot.exists()) {
+//         updatedQnsDetails = snapshot.val();
+
+//         if (updatedQnsDetails["pending"] !== undefined) {
+//           updatedQnsDetails["pending"] = updatedQnsDetails["pending"] + 1;
+//         } else {
+//           updatedQnsDetails["pending"] = 1; // Default to 1 if not exist
+//         }
+//       } else {
+//         updatedQnsDetails["pending"] = 1; // Default for new users
+//       }
+
+//       await update(userRef, updatedQnsDetails);
+
+//       alert(
+//         `Updated: "pending", Total Questions: ${updatedQnsDetails["pending"]}`
+//       );
+//     } catch (error) {
+//       console.error("Error updating solved questions:", error);
+//     }
+//   };
+
+//     updateQuestionDetails();
+// }, [loggedInUserUID, questione, topic]);

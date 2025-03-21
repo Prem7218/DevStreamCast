@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { User, Globe } from "lucide-react";
-import { btn } from "../../constantData/url_icons";
-import Search from "./Search";
-import MenuItems from "./menuItems";
-import "../../App.css";
+import React, { useRef } from "react";
+import { useOpen } from "../../3_context/openContext";
 import { useauthCheck } from "../../3_context/authContext";
+import "../../App.css";
+import { Globe, User } from "lucide-react";
+import Searchs from "./Search";
+import MenuItems from "./menuItems";
+import { btn } from "../../constantData/url_icons";
 
 const Header = () => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { isMenuOpen, setMenuOpen, searchTerm, setSearchTerm } = useOpen();
   const { isLogin, setLogin } = useauthCheck();
   const menu = [{ name: isLogin ? "Logout" : "Account", icon: <User /> }];
+  const searchRef = useRef(null);
 
   return (
     <header className="bg-gradient-to-r from-slate-800 to-blue-400 p-4 shadow-lg text-white w-full">
@@ -26,7 +27,7 @@ const Header = () => {
         {/* Search Bar */}
         <div className="w-full checkCorrect">
           <div className="relative left-[15%] hidden sm:flex justify-between items-center bg-white rounded-lg px-3 py-2 w-[70%]">
-            <Search
+            <Searchs
               setSearchTerm={setSearchTerm}
               searchTerm={searchTerm}
               isMenuOpen={isMenuOpen}
@@ -52,19 +53,27 @@ const Header = () => {
       </div>
 
       {/* Mobile Menu Dropdown */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-gradient-to-b mt-3 from-slate-800 to-blue-400 p-4 space-y-4 animate-slide-down">
-          {/* Mobile Search Bar */}
-          <div className="checkCorrect flex bg-white rounded-lg px-3 py-2">
-            <Search
-              setSearchTerm={setSearchTerm}
-              searchTerm={searchTerm}
-              isMenuOpen={isMenuOpen}
-            />
-          </div>
 
+      <div className="md:hidden bg-gradient-to-b mt-2 from-slate-800 to-blue-400 animate-slide-down rounded-lg">
+        {/* Mobile Search Bar */}
+        <div
+          ref={searchRef}
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } checkCorrect flex bg-white rounded-lg px-3`}
+        >
+          <Searchs
+            setSearchTerm={setSearchTerm}
+            searchTerm={searchTerm}
+            isMenuOpen={isMenuOpen}
+          />
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden bg-gradient-to-b mt-3 from-slate-800 to-blue-400 p-1 rounded-md animate-slide-down">
           {/* Mobile Menu Items */}
-          <nav className="flex flex-col">
+          <nav className="flex flex-col overflow-x-auto removeScrollX">
             <MenuItems isLogin={isLogin} setLogin={setLogin} menu={menu} />
           </nav>
         </div>

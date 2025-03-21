@@ -1,14 +1,13 @@
 import { Globe } from "lucide-react";
 import React from "react";
-import { FaTimes } from "react-icons/fa"; // For the close icon
+import { FaTimes } from "react-icons/fa"; 
 import { useNavigate } from "react-router-dom";
 
 const DevLoginModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-
   const handleLogin = (id) => {
-    onClose(); // Close the modal first
-    navigate(`/authentication/${id}`); // Navigate to the login page
+    onClose(); 
+    navigate(`/authentication/${id}`); 
   };
 
   if (!isOpen) return null;

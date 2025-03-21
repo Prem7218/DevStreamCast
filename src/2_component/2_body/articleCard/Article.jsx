@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import useArticle from "../../../1_hooks/useArticle";
-import ShimmerPage from "./ArticleShimmer"; // Import shimmer loader
+import { useEffect, useRef, useState } from "react";
 import ArticelData from "./ArticelData";
+import ArticleShimmer from "./ArticleShimmer";
+import useArticle from "../../../1_hooks/useArticle";
+import { motion } from "framer-motion";
 
 const Article = () => {
   const { article, error } = useArticle();
@@ -21,7 +21,7 @@ const Article = () => {
   };
 
   useEffect(() => {
-    syncHeights(); // Sync heights initially
+    syncHeights(); 
     window.addEventListener("resize", syncHeights); // Adjust on resize
 
     return () => window.removeEventListener("resize", syncHeights);
@@ -32,7 +32,7 @@ const Article = () => {
   }
 
   if (!article) {
-    return <ShimmerPage />;
+    return <ArticleShimmer />;
   }
 
   const handleArticle = async (articleId, articlePath) => {
@@ -73,7 +73,7 @@ const Article = () => {
   };
 
   return (
-    <div className="min-w-3xl mx-auto my-6 space-y-6">
+    <div className="min-w-auto mx-auto my-6 space-y-6">
       {article.map((item) => (
         <div key={item.id} className="flex gap-6 justify-center items-center">
           {/* Left Side: Article Card (55% width) */}

@@ -1,24 +1,44 @@
-import React, { useEffect, useState } from "react";
-import useFetchData from "../../1_hooks/useFetchData";
-import ArticleCard from "./articleCard/ArticleCard";
-import { useauthCheck } from "../../3_context/authContext";
+import React, { useEffect, useRef, useState } from "react";
 import DevLoginModal from "../../Authentications/DevLoginModal";
-import { cors, devAPIEnd, devAPIStart } from "../../constantData/url_icons";
-import { useLoading } from "../../3_context/loadingContext";
-import { Link } from "react-router-dom";
+import ChatWithDraganDrop from "./ChatWithDraganDrop";
+import AnonymousChat from "./profile_post/chats/AnanomusChat";
+import { ChevronUp } from "lucide-react";
+import ChatCloseDown from "./ChatCloseDown";
+import { get, ref } from "firebase/database";
+import { auth, database } from "../../constantData/firebase";
+import Body_UL from "./UL_List/Body_UL";
+import Searchs from "../1_header/Search";
+import Connection from "./profile_post/chats/connection/Connection";
+import { useOpen } from "../../3_context/openContext";
+import News from "./mainBodyRight/News";
+import DevMeetRecording from "./mainBodyRight/DevMeetRecording";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useLoading } from "../../3_context/loadingContext";
+import { cors, devAPIEnd, devAPIStart } from "../../constantData/url_icons";
+import ArticleCard from "./articleCard/ArticleCard";
+import useFetchData from "../../1_hooks/useFetchData";
+import { useauthCheck } from "../../3_context/authContext";
 import BodyCardShimmer from "../../BodyCardShimmer";
 
 const Body = () => {
+  const loggedInUserUID = auth?.currentUser?.uid;
+  const [userChatId, setUserChatId] = useState("");
   const data = useFetchData();
+  const { setConnListOpen, user, setUser, anonomusChat, setAnonomusChat } =
+    useOpen();
   const { isLogin, isModalOpen, setModalOpen } = useauthCheck();
-  const { currentIndex, setCurrentIndex, perPage, setPerPage } = useLoading();
+  const { currentIndex, setCurrentIndex, perPage } = useLoading();
   const [isLoading, setIsLoading] = useState(false);
   const [mainArticleData, setMainArticleData] = useState(data?.result || []);
   const datas = useSelector((store) => store.search.initialState);
+  const videos = useSelector((store) => store.meetRecording || []);
+  const [showConnections, setShowConnections] = useState(false);
+  const toggleConnections = () => setShowConnections((prev) => !prev);
+  const [searchTerm1, setSearchTerm1] = useState("");
+  const searchRef = useRef(null);
 
   useEffect(() => {
-    // console.log("datas: ", datas);
     if (datas) setMainArticleData(datas);
   }, [datas]);
 
@@ -44,7 +64,7 @@ const Body = () => {
         setMainArticleData((prevData) => [...prevData, ...data.result]);
       }
     } catch (e) {
-      console.error("Error fetching data: ", e);
+      console.log("Error fetching data: ", e);
     } finally {
       setIsLoading(false); // Reset loading state
     }
@@ -76,62 +96,171 @@ const Body = () => {
     fetchData();
   }, [currentIndex]);
 
+  useEffect(() => {
+    try {
+      // Check if the logged-in user's profile exists in Firebase
+      const userRef = ref(database, `users/${loggedInUserUID}`);
+      get(userRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          setUser(snapshot.val()); // Set user profile if it exists
+        } else {
+          setUser(null); // No profile found
+        }
+      });
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  }, [loggedInUserUID]);
+
   return (
-    <div className="flex justify-around">
-      <div className="hidden md:block lg:block">
-        <h2>Side List</h2>
-        <ol>
-          <Link to={"/"}>
-            <li>Home</li>
-          </Link>
-          <Link to={"/devquizform"}>
-            <li>DevQuizOrm</li>
-          </Link>
-          <Link to={"/devleetCode"}>
-            <li>DevLeetCode</li>
-          </Link>
-          <Link to={"/"}>
-            <li>DevRepositerie's</li>
-          </Link>
-          <Link to={"/dev-dsa-practice-sheet"}>
-            <li>DevDSAPracticeSheet</li>
-          </Link>
-        </ol>
+    <div className="flex justify-between bg-gray-50">
+      {/* 🔹 Left Navigation Panel */}
+      <div className="hidden md:block lg:block lg:w-[20%] p-5 bg-white shadow-md border-r border-gray-200 z-10">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Navigation</h2>
+        <nav>
+          <Body_UL />
+        </nav>
+
+        {/* 🔍 Search & Connection Section */}
+        <div className="fixed bottom-0 left-5 w-[30%] bg-white shadow-lg rounded-md border border-gray-300">
+          {/* 🔍 Search Bar with Toggle Caret */}
+          <div className="flex items-center bg-gray-100 rounded-t-md px-4 py-2 border-b border-gray-200">
+            {/* 🔍 Search Bar - Shown When List is Open */}
+            <div
+              ref={searchRef}
+              className={showConnections ? "block w-full" : "hidden"}
+            >
+              <Searchs
+                setSearchTerm={setSearchTerm1}
+                searchTerm={searchTerm1}
+                isLogin={isLogin}
+                body={true}
+                toggleConnections={toggleConnections}
+                isConnectionsVisible={showConnections}
+                setUserChatId={setUserChatId}
+              />
+            </div>
+
+            {/* 🔹 "Connections:" Text + Caret - Shown When List is Closed */}
+            {!showConnections && (
+              <ChatCloseDown
+                toggleConnections={toggleConnections}
+                body={false}
+              />
+            )}
+          </div>
+
+          {/* 👥 Connection List with Animation */}
+          <div className="flex justify-center w-full mx-auto">
+            <div
+              className={`overflow-y-scroll h-[250px] transition-all duration-300 w-full ${
+                showConnections ? "opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <Connection
+                connections={user?.connections}
+                setConnListOpen={setConnListOpen}
+                body={true}
+                setUserChatId={setUserChatId}
+              />
+            </div>
+          </div>
+
+          <>
+            <ChatWithDraganDrop
+              userChatId={userChatId}
+              toggleConnections={toggleConnections}
+            />
+          </>
+        </div>
       </div>
 
-      <div className="min-h-screen w-[65%] p-6">
+      {/* 🔹 Main Content Area */}
+      <div className="flex-1 lg:w-[55%] md:w-[50%] z-0">
         {isModalOpen && (
           <DevLoginModal
             isOpen={isLogin === false && isModalOpen}
             onClose={() => setModalOpen(false)}
           />
         )}
+
         {mainArticleData.length > 0 ? (
-          mainArticleData.map((articleData, index) => {
-            return (
-              <div
-                key={index || articleData.id}
-                {...(!isLogin && { onClick: () => setModalOpen(true) })}
-                style={{ cursor: !isLogin ? "pointer" : "default" }}
-              >
-                {isLogin ? (
-                  <Link to={isLogin ? `/dev-article/${articleData?.user?.username}` : "/"}>
-                    <ArticleCard {...articleData} />
-                  </Link>
-                ) : (
+          mainArticleData.map((articleData, index) => (
+            <div
+              key={index || articleData.id}
+              {...(!isLogin && { onClick: () => setModalOpen(true) })}
+              className={`rounded-lg shadow-md border border-gray-200
+                          ${
+                            !isLogin ? "cursor-pointer hover:bg-gray-100" : ""
+                          }`}
+            >
+              {isLogin ? (
+                <Link
+                  to={
+                    isLogin
+                      ? `/dev-article/${articleData?.user?.username}`
+                      : "/"
+                  }
+                >
                   <ArticleCard {...articleData} />
-                )}
-              </div>
-            );
-          })
+                </Link>
+              ) : (
+                <ArticleCard {...articleData} />
+              )}
+            </div>
+          ))
         ) : (
           <>{isLoading && <BodyCardShimmer />}</>
         )}
       </div>
 
-      <div className="hidden md:block lg:block">
-        <h2>Latest Tech News</h2>
+      <div className="fixed bottom-0 right-4 w-[95%] sm:w-[60%] md:w-[40%] lg:w-[30%] max-w-[400px]">
+        {/* Chat Window */}
+        {anonomusChat.showanonomus && (
+          <>
+            {!anonomusChat?.sleepanonomus ? (
+              <div className="rounded-md shadow-lg border border-gray-300">
+                <AnonymousChat />
+              </div>
+            ) : (
+              <div className="flex items-center justify-between  bg-blue-600 text-white px-3 py-2 hover:bg-white hover:text-black shadow-md border border-blue-400 rounded-lg">
+                <div className="text-lg font-semibold">
+                  Anonymous Chat Room 🕵️
+                </div>
+
+                <button
+                  className="cursor-pointer transition-transform hover:scale-110"
+                  onClick={() => {
+                    setAnonomusChat((prev) => ({
+                      ...prev,
+                      sleepanonomus: !prev?.sleepanonomus,
+                    }));
+                  }}
+                >
+                  <ChevronUp
+                    className={`h-6 w-[24px] transition-transform ${
+                      anonomusChat.sleepanonomus ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
+      {/* 🔹 Right Sidebar */}
+      <aside className="lg:w-[25%] md:w-[30%] sm:w-[35%] p-4 space-y-4 shadow-md border-l border-gray-200 h-fit">
+        {/* 🎥 Dev Meet Recordings */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <DevMeetRecording videos={videos} />
+        </div>
+
+        {/* 📰 News Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <News />
+        </div>
+      </aside>
     </div>
   );
 };

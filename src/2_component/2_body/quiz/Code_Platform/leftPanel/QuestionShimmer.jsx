@@ -1,6 +1,6 @@
 import React from "react";
 
-const QuestionShimmer = () => {
+export const QuestionShimmer = () => {
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-full animate-pulse h-[84%] border border-white">
       <div className="h-6 bg-gray-700 w-2/3 rounded mb-4"></div>{" "}
@@ -24,5 +24,3 @@ const QuestionShimmer = () => {
     </div>
   );
 };
-
-export default QuestionShimmer;

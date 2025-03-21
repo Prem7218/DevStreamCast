@@ -1,6 +1,6 @@
 import React from "react";
 
-const DSATopics = ({ topics, setSelectedTopics }) => {
+const DSATopics = ({ topics, setSelectedTopics, selectedTopics }) => {
   return (
     <>
       <h3 className="text-xl font-semibold mb-4 text-yellow-400 text-center">
@@ -11,7 +11,12 @@ const DSATopics = ({ topics, setSelectedTopics }) => {
           <button
             onClick={() => setSelectedTopics(topic)}
             key={topic}
-            className="px-5 py-2 bg-gray-800 rounded hover:bg-gray-700 transition whitespace-nowrap"
+            className={`px-5 py-2 rounded whitespace-nowrap transition 
+              ${
+                selectedTopics === topic
+                  ? "bg-yellow-400 text-black" // Selected topic color
+                  : "bg-gray-800 hover:bg-gray-700" // Default color
+              }`}
           >
             {topic}
           </button>

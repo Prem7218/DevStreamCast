@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
+import { editorExtensions2, editorExtensionsWithSearch, myTheme } from "./CodeAutoCompletion";
 import { useDispatch, useSelector } from "react-redux";
 import { addQnsTop } from "../../../../../constantData/Slices/dsaSlice";
 
@@ -52,8 +53,8 @@ const CodeEditorShimmer = ({
           value={checker?.code || ""}
           height="100%"
           className="w-full h-[98%]"
-          theme={darkMode ? "dark" : "light"}
-          extensions={languageExtensions[language] || []}
+          theme={darkMode ? "dark" : "light" ? myTheme : "light"}
+          extensions={languageExtensions[language] || editorExtensionsWithSearch || editorExtensions2 || []}
           onChange={(value) => setChecker((prev) => ({ ...prev, code: value }))}
         />
       )}

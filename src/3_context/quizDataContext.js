@@ -5,7 +5,7 @@ export const QuizDataContext = createContext();
 export const QuizDataProvider = ({ children }) => {
   const [username, setUsername] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("java-script");
-  const [customLanguage, setCustomLanguage] = useState("java-script");
+  const [customLanguage, setCustomLanguage] = useState("");
   const [level, setLevel] = useState("intermediate");
   const [challengeType, setChallengeType] = useState("Error-Handling");
   const [numQuestions, setNumQuestions] = useState(5);

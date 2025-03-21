@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { reaction1 } from "../../../constantData/mock_data";
 
 const ArticleCard = ({
   title = "Untitled Article",
@@ -9,12 +10,11 @@ const ArticleCard = ({
   readable_publish_date = "Unknown Date",
 }) => {
   const [hoveredReaction, setHoveredReaction] = useState(null);
-  const reaction1 = ["😊", "❤️", "👍", "😄", "💡", "🎉", "❤️", "😄", "😊", "💡", "💡"];
 
   return (
     <>
       <div 
-        className="bg-white border rounded-lg shadow-md p-5 max-w-4xl w-full sm:w-11/12 mx-auto mt-3 transition-transform transform hover:scale-105 duration-300">
+        className="border p-3 m-8 my-4 rounded-lg shadow-md transition-transform transform hover:scale-105 duration-300">
         {/* Author Section */}
         <div className="flex items-center mb-4">
           <img

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useQuizData } from "../../../../3_context/quizDataContext";
-import { useNavigate } from "react-router-dom";
 import TechName from "./TechName";
 import TechLangSelect from "./TechLangSelect";
 import TechLangCutomIn from "./TechLangCutomIn";
@@ -9,12 +8,14 @@ import TechLevelSelect from "./TechLevelSelect";
 import TechChallenge from "./TechChallenge";
 import TechQnsSelect from "./TechQnsSelect";
 import TechTimePerQnsSelect from "./TechTimePerQnsSelect";
+import { useNavigate } from "react-router-dom";
 
 const TechQuizChallenge = () => {
+  const navigate = useNavigate();
   const {
     selectedLanguage,
     setSelectedLanguage,
-    customLanguage,
+    customLanguage, 
     setCustomLanguage,
     setLevel,
     setChallengeType,
@@ -23,7 +24,6 @@ const TechQuizChallenge = () => {
     username,
     setUsername,
   } = useQuizData();
-  const navigate = useNavigate();
 
   // Language options
   const languages = ["JavaScript", "Python", "Java", "C++", "React"];
@@ -48,21 +48,21 @@ const TechQuizChallenge = () => {
             className="space-y-4"
           >
             
-            <TechName username={username} setUsername={setUsername} />  {/* Name Input */}
+            <TechName username={username} setUsername={setUsername} /> 
             <TechLangSelect
               setSelectedLanguage={setSelectedLanguage}                 
               languages={languages}
-            />                                                          {/* Language Selection */}
+            />                                                         
 
             <TechLangCutomIn
               customLanguage={customLanguage}                           
               setCustomLanguage={setCustomLanguage}   
-            />                                                          {/* Custom Language Input */}
+            />                                                         
 
-            <TechLevelSelect setLevel={setLevel} />                     {/* Level Selection */}
-            <TechChallenge setChallengeType={setChallengeType} />       {/* Challenge Type Selection */}
-            <TechQnsSelect setNumQuestions={setNumQuestions} />         {/* Number of Questions Selection */}
-            <TechTimePerQnsSelect setTimePerQuestion={setTimePerQuestion} />{/* Time per Question Selection */}
+            <TechLevelSelect setLevel={setLevel} />                   
+            <TechChallenge setChallengeType={setChallengeType} />      
+            <TechQnsSelect setNumQuestions={setNumQuestions} />         
+            <TechTimePerQnsSelect setTimePerQuestion={setTimePerQuestion} />
 
             {/* Start Button */}
             <motion.button                                              

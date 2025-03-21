@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { useLoading } from '../3_context/loadingContext';
+import { useEffect, useState } from "react";
+import { useLoading } from "../3_context/loadingContext";
+
 
 const useFetchSearch = (query) => {
     const [searchData, setSearchData] = useState(null);

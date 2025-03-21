@@ -1,11 +1,14 @@
+import { syntaxTree } from "@codemirror/language";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GEMINI_API_KEY } from "./url_icons";
 
+const GEMINI_API_KEY = process.env.THE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 export const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-export const PROMPT1 = `Generate 5`; // Number of questions
-export const PROMPT2 = ` multiple-choice questions and answers for a tech quiz on`; // Language
+export const imogies = ["👍", "❤️", "🔥", "😂"];
+export const reaction1 = ["😊", "❤️", "👍", "😄", "💡", "🎉", "❤️", "😄", "😊", "💡", "💡"];
+export const PROMPT1 = `Generate Strictly Only `; // Number of questions
+export const PROMPT2 = ` multiple-choice questions and answers Of ` // Level
+export const PROMPT2a= `for tech quiz on`; // Language
 export const PROMPT3 = ` && The Challenge / QuestionType is:  `; // Challenge Type
 export const PROMPT4 = ` as there are different Challenge / QuestionType options like: MCQ, Code Completion, Error Finding, Optimize Code Selection, Mix, Debugging, Algorithm Analysis, etc.`;
 
@@ -52,6 +55,8 @@ Provide a structured review that includes:
 3️⃣ **Code Review – Correct OR Not?** ✅  
    - Simply state if the **original code is correct or incorrect**.  
    - If incorrect, provide a **brief explanation** of what is wrong.  
+   - Strictly: Not Only Consider Only The Test Case Present In Question but Also Consider Related All Test Cases To That Question.
+   - & Also Say to User Below of There Code Review For Which Text Case Ans Is Wrong.
 
 4️⃣ ** Output of Code if in Readable format because is show in a box of width 500px & height 600 px but box is scrollable to y axis** 📝`;
 
@@ -70,7 +75,7 @@ export const MOCK_QNS = `Given an array of integers nums and an integer target, 
                 Input: nums = [2,7,11,15], target = 9
                 Output: [0,1]`
 
-export const Header = () => {
+export const DevHeader = () => {
   return (
     <>
       <h1 className="text-4xl font-extrabold text-center mb-8 text-blue-400 drop-shadow-lg">
@@ -120,7 +125,31 @@ export const systemDesignTopics = [
   ],
 ];
 
+// export  const articles = [
+//     {
+//       source: { id: "the-verge", name: "The Verge" },
+//       author: "Tom Warren, Emma Roth",
+//       title: "OpenAI announces GPT-4.5, warns it’s not a frontier AI model - The Verge",
+//       description: "OpenAI is launching its next major AI model. Codenamed Orion, GPT-4.5 is the latest AI model from OpenAI, but it’s not a frontier one.",
+//       url: "https://www.theverge.com/news/620021/openai-gpt-4-5-orion-ai-model-release",
+//       urlToImage: "https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/cfRYp0nItZ8-HD.jpg",
+//       publishedAt: "2025-02-27T19:39:21Z",
+//       content: "OpenAIs newest and largest model is being released as a research preview...",
+//     },
+//     {
+//       source: { id: "associated-press", name: "Associated Press" },
+//       author: null,
+//       title: "Apple will fix iPhone glitch that suggests replacing the word ‘racist’ with ‘Trump’ - The Associated Press",
+//       description: "Apple says it’s fixing a bug with its dictation feature on some iPhones...",
+//       url: "https://apnews.com/article/apple-iphone-racist-trump-glitch-d80f88d69f6ceac585904f2faa2a9212",
+//       urlToImage: "https://dims.apnews.com/dims4/default/446d7d2/2147483647/strip/true/crop/5670x3189+0+295/resize/1440x810/",
+//       publishedAt: "2025-02-26T19:02:00Z",
+//       content: "LONDON (AP) Apple is fixing a bug...",
+//     },
+//   ];
+
 // 🚀 Difficulty Levels
+
 export const levels = [
   "🔥 Level 1: Beginner",
   "🚀 Level 2: Medium Challenger",
@@ -560,3 +589,50 @@ export const DevDSAQuestions = {
   },
 };
 
+
+// JSDoc Tags Autocomplete
+const tagOptions = [
+  "constructor",
+  "deprecated",
+  "link",
+  "param",
+  "returns",
+  "type",
+].map((tag) => ({ label: "@" + tag, type: "keyword" }));
+
+function completeJSDoc(context) {
+  let nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1);
+  if (
+    nodeBefore.name !== "BlockComment" ||
+    !/\/\*\*[\s\S]*\*\//.test(context.state.sliceDoc(nodeBefore.from, nodeBefore.to)) // ✅ Improved JSDoc check
+  ) {
+    return null;
+  }
+
+  let textBefore = context.state.sliceDoc(nodeBefore.from, context.pos);
+  let tagBefore = /@\w*$/.exec(textBefore);
+  if (!tagBefore && !context.explicit) return null;
+
+  return {
+    from: tagBefore ? nodeBefore.from + tagBefore.index : context.pos,
+    options: tagOptions,
+    validFor: /^(@\w*)?$/,
+  };
+}
+
+// Custom Autocomplete
+function myCompletions(context) {
+  let word = context.matchBefore(/\w*/);
+  if (!word || (!context.explicit && word.text.length < 2)) return null; // ✅ Prevents errors
+
+  return {
+    from: word.from,
+    options: [
+      { label: "match", type: "keyword" },
+      { label: "hello", type: "variable", info: "(World)" },
+      { label: "magic", type: "text", apply: "⠁⭒*.✩.*⭒⠁", detail: "macro" },
+    ],
+  };
+}
+
+export { completeJSDoc, myCompletions };

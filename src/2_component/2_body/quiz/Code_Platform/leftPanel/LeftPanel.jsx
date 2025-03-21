@@ -1,6 +1,6 @@
 import React from "react";
-import QuestionShimmer from "./QuestionShimmer";
 import { MOCK_QNS } from "../../../../../constantData/mock_data";
+import { QuestionShimmer } from "./QuestionShimmer"
 
 const LeftPanel = ({
   showPreviousQuestions,

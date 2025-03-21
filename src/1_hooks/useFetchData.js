@@ -16,13 +16,13 @@ const useFetchData = () => {
         const data = await resp.json();
         setNewData(data?.result);
       } catch (e) {
-        console.error("Error fetching data:", e);
+        console.log("Error fetching data:", e);
       }
     };
 
     if (!apiData || newData !== apiData) {
       timeout = setTimeout(() => {
-        
+        console.log("Hello In Set Time Out");
         fetchData();
       }, 1000);
     }

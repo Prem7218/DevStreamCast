@@ -1,48 +1,16 @@
+console.log("✅ index.js is loaded!");
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
 const div = document.getElementById("mainBody");
-const root= ReactDOM.createRoot(div);
-root.render(
+if (div) {
+  const root = ReactDOM.createRoot(div);
+  root.render(
     <React.StrictMode>
-        <App />
+      <App />
     </React.StrictMode>
-);
-
-
-// import React from 'react';
-// import './App.css';
-// import JitsiMeetingComponent from './Demo/try';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <h1>Jitsi Meeting Integration</h1>
-//         <JitsiMeetingComponent />
-//     </div>
-//   );
-// }
-
-// const div = document.getElementById("mainBody");
-// const root= ReactDOM.createRoot(div);
-// root.render(
-//     <React.StrictMode>
-//         <App />
-//     </React.StrictMode>
-// );
-
-
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';  // Add this import
-// import './App.css';
-// import VideoGallery from './Demo/try'; // Ensure this path is correct
-
-// const div = document.getElementById("mainBody");
-// const root = ReactDOM.createRoot(div);
-
-// root.render(
-//   <React.StrictMode>
-//     <VideoGallery />
-//   </React.StrictMode>
-// );
+  );
+} else {
+  console.error("❌ Element with ID 'mainBody' not found.");
+}

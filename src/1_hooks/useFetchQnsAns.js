@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { model } from "../constantData/mock_data";
 
+
 const useFetchQnsAns = () => {
   const [quizQnsAns, setQuizQnsAns] = useState([]);
 
@@ -14,15 +15,12 @@ const useFetchQnsAns = () => {
       const result = await model.generateContent(prompt);
       let responseText =
         result?.response?.candidates[0]?.content?.parts[0]?.text || "";
-
-      // Remove backticks (if present) and parse the JSON string
       try {
         if (responseText.startsWith("```json")) {
           responseText = responseText.replace(/```json|```/g, "").trim();
         }
 
         const questionsArray = JSON.parse(responseText);
-        console.log(questionsArray);
         setQuizQnsAns(questionsArray);
       } catch (error) {
         console.error("Error parsing JSON:", error);

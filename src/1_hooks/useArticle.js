@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { cors, DEV_ARTICLE_API, DEV_API } from "../constantData/url_icons"; // Ensure DEV_API is correctly imported
+import { cors, DEV_ARTICLE_API } from "../constantData/url_icons";
 
 const useArticle = () => {
   const { username } = useParams();
@@ -16,7 +16,7 @@ const useArticle = () => {
       try {
         const response1 = await fetch(`${cors}${DEV_ARTICLE_API}${username}`, {
           headers: {
-            "api-key": DEV_API,
+            "api-key": process.env.THE_DEV_API,
           },
         });
 

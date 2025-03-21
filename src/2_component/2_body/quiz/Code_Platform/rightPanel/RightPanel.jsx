@@ -1,6 +1,7 @@
 import React from "react";
+import { QuestionShimmer } from "../leftPanel/QuestionShimmer";
 import CodeEditorShimmer from "./CodeEditorShimmer";
-import QuestionShimmer from "../leftPanel/QuestionShimmer";
+import "../../../../../App.css";
 
 const RightPanel = ({
   setLanguage,
@@ -17,28 +18,40 @@ const RightPanel = ({
       id="code-panel"
       className="my-auto mx-[1%] bg-gray-900 text-white h-[95%] flex flex-col"
     >
-      <div className="flex justify-between">
-        <h2 className="text-lg font-semibold">💻 Code Editor</h2>
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="bg-gray-700 text-white px-3 py-1 mb-1 rounded cursor-pointer"
-        >
-          {[
-            "C++",
-            "JavaScript",
-            "Python",
-            "Java",
-            "Rust",
-            "Go",
-            "SQL",
-            "HTML",
-          ].map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </select>
+      <div className="grid grid-cols-3 w-full items-center">
+        {/* 🔹 Title - Start */}
+        <h2 className="text-lg font-semibold text-start">💻 Code Editor</h2>
+
+        {/* 🔹 Search Info - Center */}
+        <div className="hidden sm:flex justify-center w-full">
+          <pre className="text-sm font-semibold text-white bg-gray-700 px-3 py-1 rounded-md overflow-x-auto w-fit removeScrollX">
+            🔍 Open Search: Press [ Ctrl + F ] OR [ F3 ]
+          </pre>
+        </div>
+
+        {/* 🔹 Language Selector - End */}
+        <div className="flex justify-end w-full">
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-gray-700 text-white px-3 sm:px-1 py-1 mb-1 rounded cursor-pointer w-fit"
+          >
+            {[
+              "C++",
+              "JavaScript",
+              "Python",
+              "Java",
+              "Rust",
+              "Go",
+              "SQL",
+              "HTML",
+            ].map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div

@@ -1,20 +1,37 @@
 import React, { useState, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQuizData } from "../../../3_context/quizDataContext";
+import { get, ref, update } from "firebase/database";
+import { auth, database } from "../../../constantData/firebase";
 import useFetchQnsAns from "../../../1_hooks/useFetchQnsAns";
 import {
   PROMPT1,
   PROMPT2,
+  PROMPT2a,
   PROMPT3,
   PROMPT4,
   PROMPT5,
   PROMPT_RANDOMIZER,
 } from "../../../constantData/mock_data";
 import { useNavigate } from "react-router-dom";
-import { useQuizData } from "../../../3_context/quizDataContext";
 
 const QuizComponent = () => {
   const navigate = useNavigate();
-  const { username, level, language, challengeType, numQuestions, timePerQuestion } = useQuizData();
+  const {
+    selectedLanguage,
+    setSelectedLanguage,
+    customLanguage,
+    setCustomLanguage,
+    level,
+    setLevel,
+    challengeType,
+    setChallengeType,
+    numQuestions,
+    setNumQuestions,
+    timePerQuestion,
+    setTimePerQuestion,
+    username,
+  } = useQuizData();
   const { quizQnsAns, fetchQnsAns } = useFetchQnsAns();
   const [questions, setQuestions] = useState([]);
   const [remainingQuestions, setRemainingQuestions] = useState(numQuestions);
@@ -25,6 +42,48 @@ const QuizComponent = () => {
   const [totalScore, setTotalScore] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
+  const loggedInUserUID = auth.currentUser?.uid;
+
+  const handleMcqAptiStats = async () => {
+    if (!loggedInUserUID || !selectedLanguage || !numQuestions) return;
+
+    try {
+      const statsRef = ref(
+        database,
+        `users/${loggedInUserUID}/mcqAptiStats/subjects`
+      );
+      const snapshot = await get(statsRef);
+
+      let updatedSubjects = {};
+      const selectedLanguag =
+        customLanguage !== "" ? customLanguage : selectedLanguage;
+
+      if (snapshot.exists()) {
+        updatedSubjects = snapshot.val(); // Get existing subjects
+
+        // If subject exists, add new questions count
+        if (updatedSubjects[selectedLanguag]) {
+          updatedSubjects[selectedLanguag] += numQuestions;
+        } else {
+          updatedSubjects[selectedLanguag] = numQuestions; // Add new subject
+        }
+      } else {
+        // If no subjects exist, create a new structure
+        updatedSubjects[selectedLanguag] = numQuestions;
+      }
+
+      // Update Firebase
+      await update(statsRef, updatedSubjects);
+    } catch (error) {
+      console.error("Error updating mcqAptiStats:", error);
+    }
+  };
+
+  // Run when dependencies change
+  useEffect(() => {
+    handleMcqAptiStats();
+  }, [loggedInUserUID, selectedLanguage, numQuestions]);
+
   // Fetch Questions
   useEffect(() => {
     if (remainingQuestions > 0 && currentQuestion % 5 === 0) {
@@ -32,9 +91,11 @@ const QuizComponent = () => {
         try {
           await fetchQnsAns(
             PROMPT1 +
-              level +
+              numQuestions +
               PROMPT2 +
-              language +
+              level +
+              PROMPT2a +
+              (customLanguage !== "" ? customLanguage : selectedLanguage) +
               PROMPT3 +
               challengeType +
               PROMPT4 +
@@ -50,7 +111,7 @@ const QuizComponent = () => {
   }, [currentQuestion]);
 
   useEffect(() => {
-    if (quizQnsAns.length > 0) {
+    if (quizQnsAns.length >= 0) {
       setQuestions((prevQuestions) => [...prevQuestions, ...quizQnsAns]);
       setRemainingQuestions((prev) => prev - 5);
     }
@@ -225,7 +286,15 @@ const QuizComponent = () => {
               Submit ✅
             </button>
             <button
-              onClick={() => navigate("/devquizform")}
+              onClick={() => {
+                setChallengeType("Error-Handling");
+                setSelectedLanguage("java-script");
+                setCustomLanguage("");
+                setLevel("intermediate");
+                setTimePerQuestion(10);
+                setNumQuestions(5);
+                navigate("/devquizform");
+              }}
               className="bg-red-500 p-3 rounded-lg font-semibold"
             >
               Exit ❌
@@ -299,7 +368,15 @@ const QuizComponent = () => {
             <div className="mt-6 text-center">
               <button
                 className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600"
-                onClick={() => navigate("/devquizform")}
+                onClick={() => {
+                  setChallengeType("Error-Handling");
+                  setSelectedLanguage("java-script");
+                  setCustomLanguage("");
+                  setLevel("intermediate");
+                  setTimePerQuestion(10);
+                  setNumQuestions(5);
+                  navigate("/devquizform");
+                }}
               >
                 Go to DevQuizForm
               </button>

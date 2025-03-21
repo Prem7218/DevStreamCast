@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { DevDSAQuestions, levels } from "../../../../constantData/mock_data";
-import QuestionList from "./QuestionList";
-import TopicSelect from "./TopicSelect";
+import { DevDSAQuestions, DevHeader, levels } from "../../../../constantData/mock_data";
 import DifficultySelect from "./DifficultySelect";
-import { Header } from "../../../../constantData/mock_data";
+import TopicSelect from "./TopicSelect";
+import QuestionList from "./QuestionList";
 
 const DevDSAPracticeSheet = () => {
   // 🔹 State for selected difficulty & topic
@@ -36,7 +35,7 @@ const DevDSAPracticeSheet = () => {
     <div className="min-h-screen bg-gray-950 text-white px-8 py-12">
 
       {/* 🔹 Header */}
-      <Header />
+      <DevHeader />
 
       {/* 🔹 Difficulty Selector */}
       <DifficultySelect

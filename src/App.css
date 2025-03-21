@@ -8,6 +8,14 @@
     }
 }
 
+.removeScrollX {
+    overflow-x: scroll; 
+}
+
+.removeScrollX::-webkit-scrollbar {
+    display: none;
+}
+
 
 /* Split Container */
 .split {

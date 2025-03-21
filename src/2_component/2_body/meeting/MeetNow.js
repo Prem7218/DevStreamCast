@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { User, IdCard, Mail } from "lucide-react"; 
-import { AiOutlineSend } from "react-icons/ai"; 
+import { AiOutlineSend } from "react-icons/ai";
+import { IdCard, Mail, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const MeetingForm = () => {

@@ -9,4 +9,7 @@ const token = generate('my private key', { // Pass your generated private key
 
 console.log(token); // Write JWT to console.
 
-API: 5AFEMtz7H76ejqrMzK1NuwaE Dev.to
+API:  Dev.to
+API: "https://newsapi.org/v2/top-headlines?category=technology&apiKey=" The News.prem@
+API: https://newsapi.org/v2/top-headlines?category=technology&apiKey= The News.prem@
+API: https://gnews.io/api/v4/top-headlines?category=technology&lang=en&country=us&apikey= GNews.prem@
