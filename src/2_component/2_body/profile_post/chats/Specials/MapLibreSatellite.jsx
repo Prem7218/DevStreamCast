@@ -47,7 +47,6 @@ const MapLibreSatellite = ({ location, onClose, setUploads, messageBox }) => {
       if (confirmSave) {
         // Store the clicked location in state & parent
         setUploads((prev) => ({ ...prev, locationUpload: `${clickedLat},${clickedLng}` }));
-
         // ✅ Remove Old Marker
         if (marker) marker.remove();
 
@@ -64,7 +63,7 @@ const MapLibreSatellite = ({ location, onClose, setUploads, messageBox }) => {
   }, [mapStyle]);
 
   return (
-    <div className={`absolute  ${messageBox ? "w-[350px] h-[200px] right-[-8%]" : "w-[600px] h-[400px] bottom-[10%] left-[30%]"} rounded-md shadow-md overflow-hidden`}>
+    <div className={`absolute  ${messageBox ? "w-[350px] h-[200px] top-[45%] right-0 " : "w-[600px] h-[400px] bottom-[10%] left-[30%]"} rounded-md shadow-md overflow-hidden`}>
       {/* Map Container */}
       <div ref={mapContainerRef} className="w-full h-full" />
 
@@ -84,7 +83,7 @@ const MapLibreSatellite = ({ location, onClose, setUploads, messageBox }) => {
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md"
+        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md cursor-pointer"
       >
         ✖ Close
       </button>

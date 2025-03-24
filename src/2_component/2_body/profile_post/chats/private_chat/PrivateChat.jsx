@@ -50,12 +50,10 @@ const PrivateChat = ({ userChatId }) => {
     }
   }, [messages]);
 
-  // 🔹 `sendMessage()` Function to Add New Message
   const sendMessage = async () => {
     if (!newMessage.trim() && !upload?.imageUpload) return;
 
     try {
-      // 🔹 Check for Existing Chat Room
       const chatRef1 = ref(database, `chat/private/${loggedInUID}_${userId}`);
       const chatRef2 = ref(database, `chat/private/${userId}_${loggedInUID}`);
 
@@ -65,7 +63,6 @@ const PrivateChat = ({ userChatId }) => {
       let chatRef;
       let existingMessages = [];
 
-      // 🔹 Identify the Correct Chat Room
       if (snapshot1.exists()) {
         chatRef = chatRef1;
         existingMessages = snapshot1.val().messages || [];
@@ -73,7 +70,6 @@ const PrivateChat = ({ userChatId }) => {
         chatRef = chatRef2;
         existingMessages = snapshot2.val().messages || [];
       } else {
-        // 🔹 Create New Chat Room if None Exists
         chatRef = chatRef1;
       }
 
@@ -90,12 +86,10 @@ const PrivateChat = ({ userChatId }) => {
         timestamp: Date.now(),
       };
 
-      // 🔹 Update Firebase with New Message
       await update(chatRef, {
         messages: [...existingMessages, newMsg],
       });
 
-      // 🔹 Update UI State
       setMessages([...messages, newMsg]);
       setNewMessage("");
       setUploads({
@@ -275,6 +269,8 @@ const PrivateChat = ({ userChatId }) => {
                 fileType={"image/*"}
                 setshowUpload={setshowUpload}
                 showUpload={showUpload}
+                setUploadType={setUploadType}
+                uploadType={uploadType}
               />
 
               <FileUploading

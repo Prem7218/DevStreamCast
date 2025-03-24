@@ -2,29 +2,67 @@ import React, { useEffect, useState } from "react";
 import { AVTAR, AVTAR_ID } from "../../../constantData/url_icons";
 import { JaaSMeeting } from "@jitsi/react-sdk";
 import { SignJWT } from "jose";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addMeetLink,
+  addParticipant,
+  remMeetLink,
+  removeParticipant,
+} from "../../../constantData/Slices/meetSessionSlice";
 
 const JitsiMeetingComponent = ({ nameId, emailId }) => {
+  const { roomName } = useParams();
+  const dispatch = useDispatch();
+  const meetNow = useSelector((store) => store.meetNow);
+  const participants = useSelector((store) => store.meetNow.participants); 
+  console.log("PartiDataMain: ", participants);
+  const firstMeetingURL = meetNow?.meetingLink || null;
+
   const navigate = useNavigate();
   const [jwt, setJWT] = useState("");
   const [meetingEnded, setMeetingEnded] = useState(false);
 
+  const JAAS_TENANT = process.env.REACT_JAAS_TENANT;
   const appId = process.env.REACT_ZEEGOCLOUD_APP_ID;
   const privateKeyPEM = process.env.REACT_APP_JAAS_PRIVATE_KEY;
+
+  // `https://8x8.vc/${JAAS_TENANT}/${roomName}`;
+
+  useEffect(() => {
+    if (!firstMeetingURL && emailId && nameId && roomName) {
+      const relativeMeetingURL =
+        firstMeetingURL || `/createdmeeting/${emailId}/${nameId}/${roomName}`;
+      dispatch(addMeetLink(relativeMeetingURL));
+    }
+  }, [dispatch, emailId, nameId, roomName]);
+
+  useEffect(() => {
+    const fetchJWT = async () => {
+      const token = await generateJWT();
+      if (token) {
+        setJWT(token);
+      } else {
+        console.log("Failed to fetch JWT, meeting may not work properly.");
+      }
+    };
+
+    fetchJWT();
+  }, []);
 
   const payload = {
     context: {
       user: {
-        id: AVTAR_ID,
-        name: nameId,
-        email: emailId,
-        avatar: AVTAR,
+        id: `host@${Math.floor(100 + Math.random() * 900)}`,
+        name: nameId || "Guest",
+        email: emailId || "guest@example.com",
+        avatar: AVTAR || "default-avatar.png",
         moderator: true,
       },
     },
     aud: appId,
     iss: appId,
-    sub: "meet.jit.si",
+    sub: JAAS_TENANT || "meet.jit.si",
     room: "*",
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + 3600,
@@ -43,10 +81,9 @@ const JitsiMeetingComponent = ({ nameId, emailId }) => {
       const jwt = await new SignJWT(payload)
         .setProtectedHeader({ alg: "RS256" })
         .sign(cryptoKey);
-
       return jwt;
     } catch (error) {
-      console.error("Error generating JWT:", error);
+      console.log("Error generating JWT:", error);
     }
   };
 
@@ -65,15 +102,6 @@ const JitsiMeetingComponent = ({ nameId, emailId }) => {
     return buffer;
   };
 
-  useEffect(() => {
-    const fetchJWT = async () => {
-      const token = await generateJWT();
-      setJWT(token);
-    };
-
-    fetchJWT();
-  }, []);
-
   const handleGoToHome = () => {
     navigate("/");
   };
@@ -83,7 +111,7 @@ const JitsiMeetingComponent = ({ nameId, emailId }) => {
       <div style={styles.meetingContainer}>
         <JaaSMeeting
           appId={appId}
-          roomName="Meet-Now"
+          roomName={roomName}
           jwt={jwt}
           configOverwrite={{
             prejoinPageEnabled: false,
@@ -102,13 +130,45 @@ const JitsiMeetingComponent = ({ nameId, emailId }) => {
           onApiReady={(externalApi) => {
             console.log("Jitsi External API is ready!");
 
+            externalApi.addListener("participantJoined", (participant) => {
+              console.log("Participant Joined Event:", participant);
+            
+              dispatch((dispatch, getState) => {
+                dispatch(
+                  addParticipant({
+                    id: participant.id,
+                    displayName: participant.displayName || "Unknown",
+                  })
+                );
+            
+                const currentParticipants = getState().meetNow.participants; // ✅ Fetch latest Redux state
+                console.log("Updated Participants List After Join:", currentParticipants);
+              });
+            });            
+            
             externalApi.addListener("participantLeft", (participant) => {
-              console.log(`${participant.displayName} left the meeting`);
-            });
+              console.log("Participant Left Event:", participant);
+            
+              dispatch((dispatch, getState) => {
+                const currentParticipants = getState().meetNow.participants; // ✅ Get fresh Redux state
+                console.log("Updated Participants List Before Removal:", currentParticipants);
+            
+                // Find the participant who left
+                const participantData = currentParticipants.find((p) => p.id === participant.id);
+                const displayName = participantData ? participantData.displayName : "One Member Left the Meeting...";
+            
+                alert(`${displayName} left the meeting`);
+            
+                dispatch(removeParticipant(participant.id)); // ✅ Dispatch action correctly
+              });
+            });                  
 
             externalApi.addListener("readyToClose", () => {
               console.log("Meeting is ready to close.");
-              setMeetingEnded(true);
+              setTimeout(() => {
+                dispatch(remMeetLink());
+                setMeetingEnded(true);
+              }, 1000);
             });
           }}
         />

@@ -23,7 +23,6 @@ import Connections from "./2_component/2_body/profile_post/chats/connection/Conn
 import PrivateChat from "./2_component/2_body/profile_post/chats/private_chat/PrivateChat";
 import Error from "./2_component/Errors/PageError";
 import appStore from "./constantData/Stores/appStore";
-import MapLibreSatellite from "./2_component/2_body/profile_post/chats/Specials/MapLibreSatellite";
 
 const AppLayout = () => {
   return (
@@ -67,7 +66,7 @@ const AppRouter = createBrowserRouter([
         element: <MeetingForm />,
       },
       {
-        path: "/createdmeeting/:emailId/:nameId",
+        path: "/createdmeeting/:emailId/:nameId/:roomName",
         element: <CreatedMeeting />,
       },
       {

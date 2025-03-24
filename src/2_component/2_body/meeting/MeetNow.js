@@ -25,9 +25,9 @@ const MeetingForm = () => {
     }
 
     const formattedUsername = formData.userName.trim().toLowerCase().replace(/\s+/g, "");
-
+    const roomName = `Meet-Now-${Math.floor(100 + Math.random() * 900)}`;
     if (meetingType === "global") {
-      navigate(`/createdmeeting/${formData.userEmail}/${formattedUsername}`);
+      navigate(`/createdmeeting/${formData.userEmail}/${formattedUsername}/${roomName}`);
     } else {
       navigate(`/meeting/${formData.meetingId}/${formattedUsername}`);
     }
@@ -118,7 +118,7 @@ const MeetingForm = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 cursor-pointer"
           >
             <AiOutlineSend />
             <span>Submit</span>

@@ -6,7 +6,7 @@ const meetRecordingSlice = createSlice({
     reducers: {
         uploadVideo: (state, action) => {
             state.push(action.payload);
-        }
+        } 
     }
 })
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ImgUploadBtn from "./ImgUploadBtn";
 import { FaFileAlt } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
@@ -39,7 +39,6 @@ export const Special = ({
 import React from "react";
 import { FaFileAlt } from "react-icons/fa";
 import MapLibreSatellite from "./MapLibreSatellite";
-import { useNavigate } from "react-router-dom";
 import { useOpen } from "../../../../../3_context/openContext";
 
 export const FileUploading = ({
@@ -55,7 +54,7 @@ export const FileUploading = ({
   setshowUpload,
   showUpload,
 }) => {
-  const { setShowMap } = useOpen();
+  const { showMap, setShowMap } = useOpen();
 
   const removeFile = () => {
     setUploads((prev) => ({
@@ -83,51 +82,64 @@ export const FileUploading = ({
             />
           )}
 
-          {fileType === "application/pdf" && (
-            <div className="flex items-center gap-3 p-3">
-              <FaFileAlt className="text-red-500 text-3xl" />
-              <a
-                href={upload}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                View PDF Document
-              </a>
-            </div>
-          )}
-
-          {fileType === "application/zip" && (
-            <div className="flex items-center gap-3 p-3">
-              <FaFileAlt className="text-yellow-500 text-3xl" />
-              <a
-                href={upload}
-                download
-                className="text-blue-500 hover:underline"
-              >
-                Download ZIP File
-              </a>
-            </div>
-          )}
-
-          {/* Map Sharing Link */}
-          {fileType === "location" && privates && (
+          {privates && (
             <>
-              <div className="flex items-center gap-3 p-3">
-                <button
-                  onClick={() => setShowMap(true)}
-                  className="text-blue-500 hover:underline cursor-pointer"
-                >
-                  📍 View Location
-                </button>
-              </div>
+              {fileType === "application/pdf" && (
+                <div className="flex items-center gap-3 p-3">
+                  <FaFileAlt className="text-red-500 text-3xl" />
+                  <a
+                    href={upload}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    View PDF Document
+                  </a>
+                </div>
+              )}
 
-              {setShowMap && privates && (
-                <MapLibreSatellite
-                  location={upload}
-                  onClose={() => setShowMap(false)}
-                  setUploads={setUploads}
-                />
+              {fileType === "application/zip" && (
+                <div className="flex items-center gap-3 p-3">
+                  <FaFileAlt className="text-yellow-500 text-3xl" />
+                  <a
+                    href={upload}
+                    download
+                    className="text-blue-500 hover:underline"
+                  >
+                    Download ZIP File
+                  </a>
+                </div>
+              )}
+
+              {/* Map Sharing Link */}
+              {fileType === "location" && (
+                <>
+                  <div className="flex items-center gap-3 p-3">
+                    <button
+                      onClick={() => setShowMap(true)}
+                      className="text-blue-500 hover:underline cursor-pointer"
+                    >
+                      📍 View Location
+                    </button>
+                  </div>
+
+                  {showMap && (
+                    <MapLibreSatellite
+                      location={upload}
+                      onClose={() => {
+                        setShowMap(false);
+                        setshowUpload((prev) => ({ ...prev, previews: false }));
+                        setUploads({
+                          imageUpload: null,
+                          locationUpload: null,
+                          documentUpload: null,
+                          zipElseUpload: null,
+                        });
+                      }}
+                      setUploads={setUploads}
+                    />
+                  )}
+                </>
               )}
             </>
           )}

@@ -11,7 +11,7 @@ const ChatTop = ({ userId }) => {
       {!showChat?.showChat ? (
         <button
           onClick={() => navigate(`/profile/${userId}`)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 cursor-pointer"
         >
           <FiArrowLeft size={22} />
           <span>Back</span>
@@ -26,7 +26,7 @@ const ChatTop = ({ userId }) => {
 
             save();
           }}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 cursor-pointer"
         >
           <FiX size={22} />
           <span>Close</span>

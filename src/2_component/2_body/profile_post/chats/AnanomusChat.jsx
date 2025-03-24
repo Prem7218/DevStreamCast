@@ -10,12 +10,14 @@ import { FiSend, FiX } from "react-icons/fi";
 import { onValue, push, ref } from "firebase/database";
 
 const AnonymousChat = () => {
-  const [upload, setUploads] = useState({ imageUpload: null});
+  const [upload, setUploads] = useState({ imageUpload: null });
   const [uploadType, setUploadType] = useState("");
   const fileInputRef = useRef(null);
+  const [showUpload, setshowUpload] = useState({ img: false, previews: false });
   const { handleChange } = Uploads({
     setUploads,
     setUploadType,
+    setshowUpload,
   });
 
   const [messages, setMessages] = useState([]);
@@ -23,12 +25,10 @@ const AnonymousChat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [username, setUsername] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [typingUser, setTypingUser] = useState(""); 
+  const [typingUser, setTypingUser] = useState("");
   const { setAnonomusChat } = useOpen();
   const [imogie, setImogie] = useState({});
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
-  const [ showUpload, setshowUpload ] = useState({ img: false, previews: false });
-  
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // 🔹 Generate Random Username on Load
   useEffect(() => {
@@ -87,7 +87,7 @@ const AnonymousChat = () => {
 
     await push(chatRef, newMessage1);
     setNewMessage("");
-    setUploads({imageUpload: null});
+    setUploads({ imageUpload: null });
     setIsTyping(false);
   };
 
@@ -158,6 +158,8 @@ const AnonymousChat = () => {
           fileType={"image/*"}
           setshowUpload={setshowUpload}
           showUpload={showUpload}
+          setUploadType={setUploadType}
+          uploadType={uploadType}
         />
 
         {/* Message Input */}
