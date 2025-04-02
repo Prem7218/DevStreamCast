@@ -23,7 +23,7 @@ import BodyCardShimmer from "../../BodyCardShimmer";
 
 const Body = () => {
   const loggedInUserUID = auth?.currentUser?.uid;
-  const [userChatId, setUserChatId] = useState("");
+  const [userChatId, setUserChatId] = useState(0);
   const data = useFetchData();
   const { setConnListOpen, user, setUser, anonomusChat, setAnonomusChat } =
     useOpen();
@@ -135,6 +135,7 @@ const Body = () => {
                 searchTerm={searchTerm1}
                 isLogin={isLogin}
                 body={true}
+                headMe={false}
                 toggleConnections={toggleConnections}
                 isConnectionsVisible={showConnections}
                 setUserChatId={setUserChatId}

@@ -15,8 +15,6 @@ const JitsiMeetingComponent = ({ nameId, emailId }) => {
   const { roomName } = useParams();
   const dispatch = useDispatch();
   const meetNow = useSelector((store) => store.meetNow);
-  const participants = useSelector((store) => store.meetNow.participants); 
-  console.log("PartiDataMain: ", participants);
   const firstMeetingURL = meetNow?.meetingLink || null;
 
   const navigate = useNavigate();

@@ -14,11 +14,11 @@ const useNewsData = () => {
       if (data.articles) {
         setNews(data.articles); 
       } else {
-        console.error("Invalid response format", data);
+        console.log("Invalid response format", data);
         setNews([]); 
       }
     } catch (error) {
-      console.error("Error fetching news:", error);
+      console.log("Error fetching news:", error);
       setNews([]); 
     }
   };

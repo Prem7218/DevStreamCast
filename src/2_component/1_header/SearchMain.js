@@ -2,18 +2,20 @@ import React from "react";
 import { ChevronDown, Search } from "lucide-react";
 
 const SearchMain = ({
+  headMe,
   setSearchTerm,
   handleSearchClick,
   searchTerm,
   handleKeyDown,
   body,
   toggleConnections, // New Prop for Toggling
+  isPMeet,
 }) => {
   return (
     <div
       className={`${
-        body && `m-1 p-2`
-      } flex items-center justify-between rounded-lg bg-white`}
+        body && !headMe && `m-1 p-2`
+      } flex items-center justify-between ${isPMeet ? 'rounded-sm border-2 border-white ' : 'rounded-lg'} bg-white`}
     >
       <input
         type="text"
@@ -31,7 +33,7 @@ const SearchMain = ({
       </button>
 
       {/* 🔽 Caret Toggle Button */}
-      {body && (
+      {body && !headMe && (
         <div
           className="cursor-pointer ml-2"
           onClick={toggleConnections} // Trigger Toggle

@@ -4,11 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchMain from "./SearchMain";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../constantData/firebase";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../3_context/loadingContext";
 import useFetchSearch from "../../1_hooks/useFetchSearch";
+import { updateData } from "../../constantData/Slices/searchDataSlice";
 
 const Searchs = ({
+  headMe,
+  isPMeet,
   setUserChatId,
   setSearchTerm,
   searchTerm,
@@ -23,6 +26,7 @@ const Searchs = ({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [all_user, setAllUsers] = useState([]);
   const searchData = useFetchSearch(searchTerm);
+  const meetNow = useSelector((store) => store.meetNow.meetingLink);
 
   useEffect(() => {
     const allUsersRef = ref(database, `users`);
@@ -101,6 +105,8 @@ const Searchs = ({
         setSearchTerm={setSearchTerm}
         body={body}
         toggleConnections={toggleConnections}
+        isPMeet={isPMeet}
+        headMe={headMe}
       />
 
       {/* Search Results (Only Shows When Input is Not Empty) */}
@@ -114,13 +120,18 @@ const Searchs = ({
               } flex items-center gap-4 p-3 border-b last:border-none rounded-md transition-all duration-200 hover:bg-gray-100 hover:shadow-md`}
             >
               <Link
-                to={body ? "/" : `/profile/${profile?.uid}`}
+                to={body && !headMe ? "/" : isPMeet ? meetNow : `/profile/${profile?.uid}`}
                 onClick={(e) => {
                   if (body) {
                     e.preventDefault();
-                    setShowChat((prev) => ({...prev, showChat: true}))
+                    setShowChat((prev) => ({...prev, showChat: true, sleepChat: false}))
                     setUserChatId(profile?.uid)
                   } 
+                  else {
+                    if(isPMeet) {
+                      e.preventDefault();
+                    }
+                  }
                   setSearchTerm("");
                 }}
                 className="flex items-center w-full"

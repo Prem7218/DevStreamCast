@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const meetSessionSlice = createSlice({
   name: "meetNow",
-  initialState: { meetingLink: "", participants: [] }, 
+  initialState: { meetingLink: "", participants: [], sendInvitation: [] }, 
   reducers: {
     addMeetLink: (state, action) => {
       state.meetingLink = action.payload;

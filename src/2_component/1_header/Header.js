@@ -11,7 +11,8 @@ const Header = () => {
   const { isMenuOpen, setMenuOpen, searchTerm, setSearchTerm } = useOpen();
   const { isLogin, setLogin } = useauthCheck();
   const menu = [{ name: isLogin ? "Logout" : "Account", icon: <User /> }];
-  const searchRef = useRef(null);
+  const mobileSearchRef = useRef(null);
+  const desktopSearchRef = useRef(null);
 
   return (
     <header className="bg-gradient-to-r from-slate-800 to-blue-400 p-4 shadow-lg text-white w-full">
@@ -26,8 +27,13 @@ const Header = () => {
 
         {/* Search Bar */}
         <div className="w-full checkCorrect">
-          <div className="relative left-[15%] hidden sm:flex justify-between items-center bg-white rounded-lg px-3 py-2 w-[70%]">
+          <div
+            ref={desktopSearchRef}
+            className="relative left-[15%] hidden sm:flex justify-between items-center bg-white rounded-lg px-3 py-2 w-[70%]"
+          >
             <Searchs
+              headMe={true}
+              isLogin={isLogin}
               setSearchTerm={setSearchTerm}
               searchTerm={searchTerm}
               isMenuOpen={isMenuOpen}
@@ -56,13 +62,10 @@ const Header = () => {
 
       <div className="md:hidden bg-gradient-to-b mt-2 from-slate-800 to-blue-400 animate-slide-down rounded-lg">
         {/* Mobile Search Bar */}
-        <div
-          ref={searchRef}
-          className={`${
-            isMenuOpen ? "block" : "hidden"
-          } checkCorrect flex bg-white rounded-lg px-3`}
-        >
+        <div ref={mobileSearchRef} className={`flex bg-white rounded-lg p-2 mt-2`}>
           <Searchs
+            headMe={true}
+            isLogin={isLogin}
             setSearchTerm={setSearchTerm}
             searchTerm={searchTerm}
             isMenuOpen={isMenuOpen}

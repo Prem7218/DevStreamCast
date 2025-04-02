@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useOpen } from "../../../3_context/openContext";
 import DevMeetRecording from "../mainBodyRight/DevMeetRecording";
 import Connections from "./chats/connection/Connections";
@@ -10,25 +10,31 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, setUser, ConnListOpen, setConnListOpen, setAnonomusChat } =
-    useOpen();
   const { puid } = useParams();
-  const dispatch = useDispatch();
-  const userProfiles = useSelector((state) => state.profile.userProfiles);
-  const [loading, setLoading] = useState(true);
-  const [followCheck, setFollowCheck] = useState(false);
-  const videos = useSelector((store) => store.meetRecording || []);
-
-  // Get logged-in user's UID
   const loggedInUserUID = puid || auth.currentUser?.uid;
-  const mainst = auth.currentUser?.uid;
-
+  
   useEffect(() => {
     if (!loggedInUserUID) {
       navigate("/authentication/1");
       return;
     }
+  }, []);
 
+  const meetNow = useSelector((store) => store.meetNow);
+  const firstMeetingURL = meetNow?.meetingLink || null;
+
+  const { user, setUser, ConnListOpen, setConnListOpen, setAnonomusChat } =
+    useOpen();
+
+  const { qnsLen } = useSelector((store) => store.quizData);
+  const dispatch = useDispatch();
+  const userProfiles = useSelector((state) => state.profile.userProfiles);
+  const [loading, setLoading] = useState(true);
+  const [followCheck, setFollowCheck] = useState(false);
+  const videos = useSelector((store) => store.meetRecording || []);
+  const mainst = auth.currentUser?.uid;
+
+  useEffect(() => {
     // Fetch user profiles from Redux store
     if (userProfiles.length === 0) {
       dispatch(fetchProfiles());
@@ -413,6 +419,53 @@ const Profile = () => {
       </div>
 
       <aside className="w-full lg:w-1/4 mt-5 space-y-6 lg:ml-5">
+        {/* Ongoing & Remaining Tasks */}
+        <section className="bg-gray-100 shadow-lg rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">
+            Remaining / Ongoing Tasks:
+          </h2>
+
+          <div className="space-y-3">
+            {/* Meetings */}
+            <div>
+              <h3 className="text-md font-medium text-gray-700">📅 Meetings</h3>
+              <ul className="list-disc list-inside text-gray-600 ml-4">
+                <Link
+                  to={
+                    qnsLen > 0
+                      ? firstMeetingURL
+                      : "/profile"
+                  }
+                >
+                  <li>
+                    <span className="font-medium text-gray-800">
+                      <code>{qnsLen > 0 ? "Join Meet" : "You are already finished all meeting's..."}</code>
+                    </span>
+                  </li>
+                </Link>
+              </ul>
+            </div>
+
+            {/* Quiz OR Code Challenges */}
+            <div>
+              <h3 className="text-md font-medium text-gray-700">
+                📝 Quiz / Code Challenges
+              </h3>
+              <ul className="list-disc list-inside text-gray-600 ml-4">
+                <Link to={qnsLen > 0 ? "/devquiz" : "/profile"}>
+                  <li>
+                    <span className="font-medium text-gray-800">
+                      <code>
+                        {qnsLen > 0 ? "/devquiz" : "You are up to date now..."}
+                      </code>
+                    </span>
+                  </li>
+                </Link>
+              </ul>
+            </div>
+          </div>
+        </section>
+
         {/* Dev Meet Recordings */}
         <DevMeetRecording videos={videos} />
       </aside>

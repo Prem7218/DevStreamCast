@@ -87,6 +87,7 @@ export const FileUploading = ({
               {fileType === "application/pdf" && (
                 <div className="flex items-center gap-3 p-3">
                   <FaFileAlt className="text-red-500 text-3xl" />
+                  {console.log("Upload: ", upload)}
                   <a
                     href={upload}
                     target="_blank"

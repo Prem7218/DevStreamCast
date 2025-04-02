@@ -23,6 +23,8 @@ import Connections from "./2_component/2_body/profile_post/chats/connection/Conn
 import PrivateChat from "./2_component/2_body/profile_post/chats/private_chat/PrivateChat";
 import Error from "./2_component/Errors/PageError";
 import appStore from "./constantData/Stores/appStore";
+import QuizResult from "./2_component/2_body/quiz/QuizResult";
+import PrivateMeetMe from "./2_component/2_body/meeting/PrivateMeetMe";
 
 const AppLayout = () => {
   return (
@@ -74,12 +76,20 @@ const AppRouter = createBrowserRouter([
         element: <Meeting />,
       },
       {
+        path: "/meeting/:roomid/:username/private",
+        element: <PrivateMeetMe />
+      },
+      {
         path: "/devquizform",
         element: <TechQuizChallenge />,
       },
       {
         path: "/devquiz",
         element: <QuizComponent />,
+      },
+      {
+        path: "/dev-quiz-ans",
+        element: <QuizResult />,
       },
       {
         path: "/devleetCode",

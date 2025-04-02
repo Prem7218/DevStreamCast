@@ -53,7 +53,7 @@ const MessagesBoxing = ({
                 {/* 🔹 Text Message */}
                 {msg.message && (
                   <div
-                    className={`text-sm p-2 rounded-md shadow-md w-full ${
+                    className={`text-sm p-2 rounded-md shadow-md w-full text-left ${
                       isCurrentUser
                         ? "bg-blue-500 text-white ml-auto"
                         : "bg-gray-100 text-black mr-auto"
@@ -110,7 +110,11 @@ const MessagesBoxing = ({
                       <div className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-md shadow-md">
                         <FaFileAlt className="text-red-500 text-3xl" />
                         <a
-                          href={msg.document}
+                          href={
+                            msg.document instanceof Blob
+                              ? URL.createObjectURL(msg.document)
+                              : msg.document
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
@@ -125,7 +129,11 @@ const MessagesBoxing = ({
                       <div className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-md shadow-md">
                         <FaFileAlt className="text-yellow-500 text-3xl" />
                         <a
-                          href={msg.zipElseUpload}
+                          href={
+                            msg.zipElseUpload instanceof Blob
+                              ? URL.createObjectURL(msg.zipElseUpload)
+                              : msg.zipElseUpload
+                          }
                           download
                           className="text-blue-500 hover:underline"
                         >

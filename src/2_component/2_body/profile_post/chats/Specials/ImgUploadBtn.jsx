@@ -19,7 +19,7 @@ const ImgUploadBtn = ({
     ${privates ? "h-6 mt-3 w-[95%] px-3 py-1" : "h-10 w-10"} 
     mt-1 rounded-lg hover:bg-gray-300 transition`;
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, uploadType) => {
     if (e.target.files.length > 0) {
       handleChange(e, fileType, uploadType);
     }
@@ -60,14 +60,16 @@ const ImgUploadBtn = ({
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={(e) => handleFileChange(e, uploadType)}
               className="hidden"
             />
           )}
 
           <button
             onClick={handleClick}
-            className={`flex justify-start bg-gray-200 ${privates ? "py-2 px-8 h-7 mt-1" : "p-2"} rounded-lg items-center text-sm text-gray-600 gap-2 cursor-pointer`}
+            className={`flex justify-start bg-gray-200 ${
+              privates ? "py-2 px-8 h-7 mt-1" : "p-2"
+            } rounded-lg items-center text-sm text-gray-600 gap-2 cursor-pointer`}
           >
             <div>Img {privates && "Upload Image"}</div>
           </button>
@@ -81,24 +83,27 @@ const ImgUploadBtn = ({
               <input
                 type="file"
                 accept={fileType}
-                onChange={handleFileChange}
+                onChange={(e) => handleFileChange(e, "normal")}
                 className="hidden"
               />
             )}
 
             {fileType === "location" ? (
-              <FiMapPin size={22} className="text-green-500" />
+              <button className="flex text-sm gap-2 text-gray-600 cursor-pointer" onClick={handleClick}>
+                <FiMapPin size={22} className="text-green-500" />
+                Share Location
+              </button>
             ) : (
               <FiImage size={22} className="text-gray-500" />
             )}
 
-            <div className="text-sm text-gray-600">
-              {fileType === "application/pdf"
-                ? "Upload Document"
-                : fileType === "location"
-                ? "Share Location"
-                : "Share Files"}
-            </div>
+            {fileType !== "location" && (
+              <div className="text-sm text-gray-600">
+                {fileType === "application/pdf"
+                  ? "Upload Document"
+                  : "Share Files"}
+              </div>
+            )}
           </>
         </label>
       )}
