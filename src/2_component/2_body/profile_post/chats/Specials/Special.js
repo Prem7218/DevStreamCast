@@ -19,7 +19,7 @@ export const Special = ({
       <div className="relative">
         {/* 😊 Emoji Button */}
         <button
-          onClick={() => setShowEmojiPicker((prev) => !prev)}
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           className="p-2 bg-gray-200 rounded-lg hover:bg-gray-300"
         >
           <FiSmile size={22} />

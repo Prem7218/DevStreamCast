@@ -6,6 +6,7 @@ import dsaReducer from "../Slices/dsaSlice";
 import profileReducer from "../Slices/profileSlice";
 import meetSessionReducer from "../Slices/meetSessionSlice";
 import quizDataReducer from "../Slices/quizDataSlice";
+import connectionsReducer from "../Slices/connectionsSlice";
 
 const appStore = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ const appStore = configureStore({
         profile: profileReducer,
         meetNow: meetSessionReducer,
         quizData: quizDataReducer,
+        connection: connectionsReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });

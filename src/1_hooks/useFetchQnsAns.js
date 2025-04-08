@@ -27,8 +27,6 @@ const useFetchQnsAns = () => {
         } catch (error) {
           console.log("Error parsing JSON:", error);
         }
-
-        console.log("Response: ", responseText);
       }
       else {
         return { quizQnsAns, fetchQnsAns };

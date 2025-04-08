@@ -25,6 +25,7 @@ import Error from "./2_component/Errors/PageError";
 import appStore from "./constantData/Stores/appStore";
 import QuizResult from "./2_component/2_body/quiz/QuizResult";
 import PrivateMeetMe from "./2_component/2_body/meeting/PrivateMeetMe";
+import ApiSandbox from "./2_component/2_body/API/ApiSandbox";
 
 const AppLayout = () => {
   return (
@@ -57,7 +58,7 @@ const AppRouter = createBrowserRouter([
       },
       {
         path: "/location/:lat/:lng",
-        element: <Body />
+        element: <Body />,
       },
       {
         path: "/authentication/:id",
@@ -77,7 +78,7 @@ const AppRouter = createBrowserRouter([
       },
       {
         path: "/meeting/:roomid/:username/private",
-        element: <PrivateMeetMe />
+        element: <PrivateMeetMe />,
       },
       {
         path: "/devquizform",
@@ -123,11 +124,22 @@ const AppRouter = createBrowserRouter([
         path: "/chat/:id",
         element: <PrivateChat />,
       },
+      {
+        path: "/api-testing",
+        element: <ApiSandbox />
+      }
     ],
     errorElement: <Error />,
   },
 ]);
 
 export const App = () => <RouterProvider router={AppRouter} />;
+// export const App = () => {
+//   return (
+//     <div className="min-h-screen bg-gray-50 py-10">
+//       <ApiSandbox />
+//     </div>
+//   );
+// };
 
 export default App;

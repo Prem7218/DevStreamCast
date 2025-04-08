@@ -12,6 +12,7 @@ import { Uploads } from "../Specials/Uploads";
 import MessagesBoxing from "../Specials/MessagesBoxing";
 import MessageActions from "./MessageActions";
 import useMessageSelection from "../../../../../1_hooks/useMessageSelection";
+import { useOpenZustand } from "../../../../../4_Zustand/useOpenZustand";
 
 const PrivateChat = ({ userChatId }) => {
   const { id } = useParams();
@@ -32,6 +33,7 @@ const PrivateChat = ({ userChatId }) => {
     setUploadType,
     setshowUpload,
   });
+  const { showEmojiPicker2, setShowEmojiPicker2 } = useOpenZustand();
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -41,7 +43,6 @@ const PrivateChat = ({ userChatId }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [theme, setTheme] = useState("bg-gray-100");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     const messageContainer = document.getElementById("message-container");
@@ -231,8 +232,8 @@ const PrivateChat = ({ userChatId }) => {
       {/* 🔹 Bottom Input & Options */}
       <div className="flex items-center p-3 bg-white border-t border-gray-300 gap-2">
         <Special
-          setShowEmojiPicker={setShowEmojiPicker}
-          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker2}
+          showEmojiPicker={showEmojiPicker2}
           setNewMessage={setNewMessage}
         />
 

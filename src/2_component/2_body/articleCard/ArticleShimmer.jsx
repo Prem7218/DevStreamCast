@@ -1,10 +1,10 @@
 import React from 'react'
 import ArticelData from './ArticelData';
 
-const ArticleShimmer = () => {
+const ArticleShimmer = ({shimmercard}) => {
     return (
         <div className="min-w-3xl mx-auto my-6 space-y-6">
-        {Array(5)
+        {Array(shimmercard)
           .fill("")
           .map((_, index) => (
             <div key={index} className="flex gap-6 animate-pulse justify-center items-center">

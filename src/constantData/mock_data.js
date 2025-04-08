@@ -5,10 +5,22 @@ const GEMINI_API_KEY = process.env.THE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 export const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 export const imogies = ["👍", "❤️", "🔥", "😂"];
-export const reaction1 = ["😊", "❤️", "👍", "😄", "💡", "🎉", "❤️", "😄", "😊", "💡", "💡"];
+export const reaction1 = [
+  "😊",
+  "❤️",
+  "👍",
+  "😄",
+  "💡",
+  "🎉",
+  "❤️",
+  "😄",
+  "😊",
+  "💡",
+  "💡",
+];
 export const PROMPT1 = `Generate Strictly Only `; // Number of questions
-export const PROMPT2 = ` multiple-choice questions and answers Of ` // Level
-export const PROMPT2a= `for tech quiz on`; // Language
+export const PROMPT2 = ` multiple-choice questions and answers Of `; // Level
+export const PROMPT2a = `for tech quiz on`; // Language
 export const PROMPT3 = ` && The Challenge / QuestionType is:  `; // Challenge Type
 export const PROMPT4 = ` as there are different Challenge / QuestionType options like: MCQ, Code Completion, Error Finding, Optimize Code Selection, Mix, Debugging, Algorithm Analysis, etc.`;
 
@@ -60,20 +72,19 @@ Provide a structured review that includes:
 
 4️⃣ ** Output of Code if in Readable format because is show in a box of width 500px & height 600 px but box is scrollable to y axis** 📝`;
 
-
 export const QnsPROMPT1 = `Generate a well-structured DSA-style coding problem labeled as 'Dev-DSA Question:' instead of 'LeetCode-style
             coding problem:'. The problem should be based on the selected question `;
 
 export const QnsPROMPT2 = ` and cover concepts related to the DSA topic`;
-  
+
 export const QnsPROMPT3 = `. Ensure that the problem statement is clear, concise, and formatted professionally, including constraints 
-            and example cases if necessary. Do not provide the solution or function signature.`
+            and example cases if necessary. Do not provide the solution or function signature.`;
 
 export const MOCK_QNS = `Given an array of integers nums and an integer target, return indices of the two numbers such that they add 
             up to target. You may assume that each input would have exactly one solution.
             Example:
                 Input: nums = [2,7,11,15], target = 9
-                Output: [0,1]`
+                Output: [0,1]`;
 
 export const DevHeader = () => {
   return (
@@ -89,7 +100,7 @@ export const DevHeader = () => {
       </div>
     </>
   );
-}
+};
 
 export const topics = [
   [
@@ -473,7 +484,7 @@ export const DevDSAQuestions = {
       "Choosing the Right Database for a Use Case (SQL vs NoSQL)",
       "Designing a Logging & Monitoring System (ELK Stack, Prometheus, Grafana)",
       "Cloud Architecture: Scaling a Multi-Tenant SaaS Application",
-    ]
+    ],
   },
   "🦸‍♂️ Level 4: Super Hero / Hard Boy": {
     "📌 System Design Scalability": [
@@ -589,6 +600,82 @@ export const DevDSAQuestions = {
   },
 };
 
+// Joke API:
+export const fetchProgrammingJoke = async () => {
+  try {
+    const res = await fetch("https://v2.jokeapi.dev/joke/Programming");
+    const data = await res.json();
+
+    let jokeText = "";
+
+    if (data.type === "single") {
+      jokeText = data.joke;
+    } else if (data.type === "twopart") {
+      jokeText = `${data.setup} ... ${data.delivery}`;
+    } else {
+      console.warn("Unsupported joke format:", data);
+      return;
+    }
+
+    // ✅ Speak the joke using speech synthesis
+    const utterance = new SpeechSynthesisUtterance(jokeText);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    // Wait for voices to be loaded
+    const speakAfterVoicesReady = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        utterance.voice =
+          voices.find((v) => v.lang.startsWith("en")) || voices[0];
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Try again shortly
+        setTimeout(speakAfterVoicesReady, 100);
+      }
+    };
+
+    speakAfterVoicesReady();
+
+    // Optional alert for debug (can remove)
+    alert(jokeText);
+  } catch (err) {
+    console.error("Joke fetch failed:", err);
+  }
+};
+
+// /utils/fetchApiInstructions.js
+export const fetchApiSteps = async (apiName) => {
+  const prompt = `
+You are an assistant helping developers use public APIs.
+
+Give exactly 5 clear steps for using the "${apiName}" API.
+
+If the API requires an API key, explain how to get it.
+If it's a public/free API without a key, include a direct usable sample endpoint.
+
+Always return in this format:
+
+Step 1: ...
+Step 2: ...
+Step 3: ...
+Step 4: ...
+Step 5: ...
+
+If public, append this (on new line):
+__API_SAMPLE__: https://example.com/sample-endpoint
+`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    return text;
+  } catch (error) {
+    console.error("Gemini generation failed:", error);
+    return "❌ Error fetching instructions.";
+  }
+};
 
 // JSDoc Tags Autocomplete
 const tagOptions = [
@@ -604,7 +691,9 @@ function completeJSDoc(context) {
   let nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1);
   if (
     nodeBefore.name !== "BlockComment" ||
-    !/\/\*\*[\s\S]*\*\//.test(context.state.sliceDoc(nodeBefore.from, nodeBefore.to)) // ✅ Improved JSDoc check
+    !/\/\*\*[\s\S]*\*\//.test(
+      context.state.sliceDoc(nodeBefore.from, nodeBefore.to)
+    ) // ✅ Improved JSDoc check
   ) {
     return null;
   }

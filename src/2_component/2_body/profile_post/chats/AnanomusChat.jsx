@@ -8,6 +8,7 @@ import MessagesBoxing from "./Specials/MessagesBoxing";
 import { database } from "../../../../constantData/firebase";
 import { FiSend, FiX } from "react-icons/fi";
 import { onValue, push, ref } from "firebase/database";
+import { useOpenZustand } from "../../../../4_Zustand/useOpenZustand";
 
 const AnonymousChat = () => {
   const [upload, setUploads] = useState({ imageUpload: null });
@@ -19,6 +20,7 @@ const AnonymousChat = () => {
     setUploadType,
     setshowUpload,
   });
+  const { showEmojiPicker1, setShowEmojiPicker1 } = useOpenZustand();
 
   const [messages, setMessages] = useState([]);
   const usernameRef = useRef("");
@@ -28,7 +30,6 @@ const AnonymousChat = () => {
   const [typingUser, setTypingUser] = useState("");
   const { setAnonomusChat } = useOpen();
   const [imogie, setImogie] = useState({});
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // 🔹 Generate Random Username on Load
   useEffect(() => {
@@ -145,8 +146,8 @@ const AnonymousChat = () => {
       {/* 🔹 Input Area */}
       <div className="flex items-center p-2 bg-white border-t border-gray-300 gap-2 relative">
         <Special
-          setShowEmojiPicker={setShowEmojiPicker}
-          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker1}
+          showEmojiPicker={showEmojiPicker1}
           setNewMessage={setNewMessage}
         />
 

@@ -30,7 +30,7 @@
     "@uiw/react-codemirror": "^4.23.10",
     "@zegocloud/zego-uikit-prebuilt": "^2.14.2",
     "@zegocloud/zimkit-react": "^1.2.1",
-    "axios": "^1.8.3",
+    "axios": "^1.8.4",
     "codemirror": "^6.0.1",
     "cross-fetch": "^4.1.0",
     "cross-fetch-ponyfill": "^1.0.3",
@@ -53,12 +53,14 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-icons": "^5.5.0",
+    "react-json-view": "^1.21.3",
     "react-map-gl": "^8.0.1",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.1.7",
     "react-rnd": "^10.5.2",
     "react-router-dom": "6.4",
     "react-scripts": "^5.0.1",
+    "react-speech-recognition": "^4.0.0",
     "redux-thunk": "^3.1.0",
     "split.js": "^1.6.5",
     "uuid": "^11.1.0",
@@ -66,7 +68,8 @@
     "v4": "^0.0.1",
     "video.js": "^8.22.0",
     "webtorrent": "^2.5.19",
-    "zego-zim-web": "^2.20.0"
+    "zego-zim-web": "^2.20.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "assert": "^2.1.0",

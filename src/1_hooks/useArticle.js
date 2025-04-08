@@ -8,7 +8,7 @@ const useArticle = () => {
 
   useEffect(() => {
     if (!username) {
-      setError("Article ID not found");
+      // setError("Article ID not found");
       return;
     }
 
@@ -23,8 +23,8 @@ const useArticle = () => {
         const data = await response1.json();
         setArticle(data);
       } catch (error) {
-        console.error("Error fetching articles:", error);
-        setError(error.message);
+        console.log("Error fetching articles:", error);
+        // setError(error.message);
       }
     };
 

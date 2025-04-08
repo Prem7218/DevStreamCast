@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import DevLoginModal from "../../Authentications/DevLoginModal";
 import ChatWithDraganDrop from "./ChatWithDraganDrop";
 import AnonymousChat from "./profile_post/chats/AnanomusChat";
@@ -20,23 +21,28 @@ import ArticleCard from "./articleCard/ArticleCard";
 import useFetchData from "../../1_hooks/useFetchData";
 import { useauthCheck } from "../../3_context/authContext";
 import BodyCardShimmer from "../../BodyCardShimmer";
+import { useOpenZustand } from "../../4_Zustand/useOpenZustand";
+import ApiSandbox from "./API/ApiSandbox";
 
 const Body = () => {
   const loggedInUserUID = auth?.currentUser?.uid;
-  const [userChatId, setUserChatId] = useState(0);
   const data = useFetchData();
   const { setConnListOpen, user, setUser, anonomusChat, setAnonomusChat } =
     useOpen();
   const { isLogin, isModalOpen, setModalOpen } = useauthCheck();
   const { currentIndex, setCurrentIndex, perPage } = useLoading();
+  const { searchTerm1, setSearchTerm1, showConnections, setShowConnections } =
+    useOpenZustand();
+  const userChatId = useOpenZustand((state) => state.userChatId);
+  const setUserChatId = useOpenZustand((state) => state.setUserChatId);
+
   const [isLoading, setIsLoading] = useState(false);
   const [mainArticleData, setMainArticleData] = useState(data?.result || []);
   const datas = useSelector((store) => store.search.initialState);
   const videos = useSelector((store) => store.meetRecording || []);
-  const [showConnections, setShowConnections] = useState(false);
-  const toggleConnections = () => setShowConnections((prev) => !prev);
-  const [searchTerm1, setSearchTerm1] = useState("");
+  const toggleConnections = () => setShowConnections(!showConnections);
   const searchRef = useRef(null);
+  const [page, setPage] = useState("Main");
 
   useEffect(() => {
     if (datas) setMainArticleData(datas);
@@ -118,7 +124,7 @@ const Body = () => {
       <div className="hidden md:block lg:block lg:w-[20%] p-5 bg-white shadow-md border-r border-gray-200 z-10">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Navigation</h2>
         <nav>
-          <Body_UL />
+          <Body_UL setPage={setPage} />
         </nav>
 
         {/* 🔍 Search & Connection Section */}
@@ -177,43 +183,50 @@ const Body = () => {
       </div>
 
       {/* 🔹 Main Content Area */}
-      <div className="flex-1 lg:w-[55%] md:w-[50%] z-0">
-        {isModalOpen && (
-          <DevLoginModal
-            isOpen={isLogin === false && isModalOpen}
-            onClose={() => setModalOpen(false)}
-          />
-        )}
 
-        {mainArticleData.length > 0 ? (
-          mainArticleData.map((articleData, index) => (
-            <div
-              key={index || articleData.id}
-              {...(!isLogin && { onClick: () => setModalOpen(true) })}
-              className={`rounded-lg shadow-md border border-gray-200
-                          ${
-                            !isLogin ? "cursor-pointer hover:bg-gray-100" : ""
-                          }`}
-            >
-              {isLogin ? (
-                <Link
-                  to={
-                    isLogin
-                      ? `/dev-article/${articleData?.user?.username}`
-                      : "/"
-                  }
-                >
+      {page === "Main" && (
+        <div className="flex-1 lg:w-[55%] md:w-[50%] z-0">
+          {isModalOpen && (
+            <DevLoginModal
+              isOpen={isLogin === false && isModalOpen}
+              onClose={() => setModalOpen(false)}
+            />
+          )}
+
+          {mainArticleData.length > 0 ? (
+            mainArticleData.map((articleData, index) => (
+              <div
+                key={`${articleData?.id}-${index}` || article.id || uuidv4()}
+                {...(!isLogin && { onClick: () => setModalOpen(true) })}
+                className={`rounded-lg shadow-md border border-gray-200
+                            ${
+                              !isLogin ? "cursor-pointer hover:bg-gray-100" : ""
+                            }`}
+              >
+                {isLogin ? (
+                  <Link
+                    to={
+                      isLogin
+                        ? `/dev-article/${articleData?.user?.username}`
+                        : "/"
+                    }
+                  >
+                    <ArticleCard {...articleData} />
+                  </Link>
+                ) : (
                   <ArticleCard {...articleData} />
-                </Link>
-              ) : (
-                <ArticleCard {...articleData} />
-              )}
-            </div>
-          ))
-        ) : (
-          <>{isLoading && <BodyCardShimmer />}</>
-        )}
-      </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <>{isLoading && <BodyCardShimmer />}</>
+          )}
+        </div>
+      )}
+
+      {page === "API" && (
+        <ApiSandbox />
+      )}
 
       <div className="fixed bottom-0 right-4 w-[95%] sm:w-[60%] md:w-[40%] lg:w-[30%] max-w-[400px]">
         {/* Chat Window */}
@@ -251,17 +264,19 @@ const Body = () => {
       </div>
 
       {/* 🔹 Right Sidebar */}
-      <aside className="lg:w-[25%] md:w-[30%] sm:w-[35%] p-4 space-y-4 shadow-md border-l border-gray-200 h-fit">
-        {/* 🎥 Dev Meet Recordings */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <DevMeetRecording videos={videos} />
-        </div>
+      {page === "Main" && (
+        <aside className="lg:w-[25%] md:w-[30%] sm:w-[35%] p-4 space-y-4 shadow-md border-l border-gray-200 h-fit">
+          {/* 🎥 Dev Meet Recordings */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <DevMeetRecording videos={videos} />
+          </div>
 
-        {/* 📰 News Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <News />
-        </div>
-      </aside>
+          {/* 📰 News Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <News />
+          </div>
+        </aside>
+      )}
     </div>
   );
 };

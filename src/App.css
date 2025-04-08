@@ -1,67 +1,80 @@
 .checkCorrect {
-    display: block;
+  display: block;
 }
 
 @media (min-width: 360px) and (max-width: 768px) {
-    .checkCorrect {
-        display: none;
-    }
+  .checkCorrect {
+    display: none;
+  }
 }
 
 .removeScrollX {
-    overflow-x: scroll; 
+  overflow-x: scroll;
 }
 
 .removeScrollX::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
-
 
 /* Split Container */
 .split {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 /* Gutter (Draggable Splitter) */
 .gutter {
-    background-color: #1e1e1e; /* Dark gray to blend subtly */
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: background-color 0.2s ease-in-out;
+  background-color: #1e1e1e; /* Dark gray to blend subtly */
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Horizontal Splitter Design */
 .gutter.gutter-horizontal {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
-    cursor: col-resize; /* Ensures correct resizing cursor */
-    width: 6px; /* Slightly thicker for better interaction */
-    background-color: #333; /* Medium-dark gray for visibility */
-    border-radius: 3px; /* Smooth edges */
-    transition: background-color 0.2s ease-in-out;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+  cursor: col-resize; /* Ensures correct resizing cursor */
+  width: 6px; /* Slightly thicker for better interaction */
+  background-color: #333; /* Medium-dark gray for visibility */
+  border-radius: 3px; /* Smooth edges */
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Split Container (Vertical Split) */
 .split-vertical {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Gutter (Draggable Splitter) */
 .gutter {
-    background-color: #1e1e1e; /* Dark gray to blend subtly */
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: background-color 0.2s ease-in-out;
+  background-color: #1e1e1e; /* Dark gray to blend subtly */
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Vertical Splitter Design */
 .gutter.gutter-vertical {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
-    cursor: row-resize; /* Ensures correct resizing cursor */
-    height: 6px; 
-    background-color: #333; 
-    border-radius: 3px; /* Smooth edges */
-    transition: background-color 0.2s ease-in-out;
-    z-index: 30;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
+  cursor: row-resize; /* Ensures correct resizing cursor */
+  height: 6px;
+  background-color: #333;
+  border-radius: 3px; /* Smooth edges */
+  transition: background-color 0.2s ease-in-out;
+  z-index: 30;
 }
+
+.news-article.highlight {
+  border: 2px solid #60a5fa; /* Tailwind's blue-400 */
+  background-color: #eff6ff; /* Tailwind's blue-50 */
+}
+
+.reading-now {
+  background-color: #fef08a; /* yellow-200 */
+  border-left: 4px solid #facc15; /* yellow-400 */
+  padding-left: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+

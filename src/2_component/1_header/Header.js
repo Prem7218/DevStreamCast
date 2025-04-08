@@ -37,6 +37,7 @@ const Header = () => {
               setSearchTerm={setSearchTerm}
               searchTerm={searchTerm}
               isMenuOpen={isMenuOpen}
+              inHeader={true}
             />
           </div>
         </div>

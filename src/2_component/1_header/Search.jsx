@@ -8,8 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoading } from "../../3_context/loadingContext";
 import useFetchSearch from "../../1_hooks/useFetchSearch";
 import { updateData } from "../../constantData/Slices/searchDataSlice";
+import { addConn } from "../../constantData/Slices/connectionsSlice";
+import { useOpenZustand } from "../../4_Zustand/useOpenZustand";
 
 const Searchs = ({
+  inHeader,
   headMe,
   isPMeet,
   setUserChatId,
@@ -24,9 +27,10 @@ const Searchs = ({
   const { setShowChat } = useOpen();
   const { searchIndex, setSearchIndex } = useLoading();
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [all_user, setAllUsers] = useState([]);
   const searchData = useFetchSearch(searchTerm);
   const meetNow = useSelector((store) => store.meetNow.meetingLink);
+  const all_user = useOpenZustand((state) => state.all_user);
+  const setAllUsers = useOpenZustand((state) => state.setAllUsers);
 
   useEffect(() => {
     const allUsersRef = ref(database, `users`);
@@ -39,7 +43,7 @@ const Searchs = ({
           uid: key,
           ...data[key],
         }));
-        setAllUsers(usersArray);
+        setAllUsers(usersArray)
       } else {
         setAllUsers([]);
       }
@@ -91,7 +95,13 @@ const Searchs = ({
 
     if (event.key === "Enter" && selectedIndex !== -1) {
       setSearchTerm("");
-      navigate(`/profile/${filteredProfiles[selectedIndex]?.uid}`);
+      if (body && !headMe) {
+        navigate("/");
+        setShowChat((prev) => ({ ...prev, showChat: true, sleepChat: false }));
+        setUserChatId(filteredProfiles[selectedIndex]?.uid);
+      } else {
+        navigate(`/profile/${filteredProfiles[selectedIndex]?.uid}`);
+      }
     }
   };
 
@@ -111,7 +121,7 @@ const Searchs = ({
 
       {/* Search Results (Only Shows When Input is Not Empty) */}
       {isLogin && filteredProfiles.length > 0 && (
-        <ul className="absolute top-full left-0 w-full bg-white shadow-lg rounded-lg border border-gray-200 mt-3 p-3 z-50">
+        <ul className={`absolute top-full left-0 w-full bg-white shadow-lg rounded-lg border border-gray-200 mt-3 p-3 ${inHeader ? "z-50" : "z-0"}`}>
           {filteredProfiles.map((profile, index) => (
             <li
               key={profile.uid}
@@ -120,15 +130,24 @@ const Searchs = ({
               } flex items-center gap-4 p-3 border-b last:border-none rounded-md transition-all duration-200 hover:bg-gray-100 hover:shadow-md`}
             >
               <Link
-                to={body && !headMe ? "/" : isPMeet ? meetNow : `/profile/${profile?.uid}`}
+                to={
+                  body && !headMe
+                    ? "/"
+                    : isPMeet
+                    ? meetNow
+                    : `/profile/${profile?.uid}`
+                }
                 onClick={(e) => {
                   if (body) {
                     e.preventDefault();
-                    setShowChat((prev) => ({...prev, showChat: true, sleepChat: false}))
-                    setUserChatId(profile?.uid)
-                  } 
-                  else {
-                    if(isPMeet) {
+                    setShowChat((prev) => ({
+                      ...prev,
+                      showChat: true,
+                      sleepChat: false,
+                    }));
+                    setUserChatId(profile?.uid);
+                  } else {
+                    if (isPMeet) {
                       e.preventDefault();
                     }
                   }

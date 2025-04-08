@@ -54,7 +54,6 @@ const QuizComponent = () => {
   } = useSelector((state) => state.quizData);
 
   const store = useSelector((state) => state.quizData);
-  console.log("Store: ", store ," \n QMS: ", storedQuestions);
 
   const { quizQnsAns, fetchQnsAns } = useFetchQnsAns();
   const [questions, setQuestions] = useState(storedQuestions);
@@ -156,7 +155,6 @@ const QuizComponent = () => {
 
   useEffect(() => {
     if (questions.length > 0) {
-      console.log("Hello in Update State Quiz....");
       dispatch(
         fillQuizData({
           selectedLanguage: selectedLanguage,

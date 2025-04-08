@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { auth, database } from "../../../constantData/firebase";
 import { get, ref, update } from "firebase/database";
 import { useDispatch } from "react-redux";
-import { updateProfile } from "../../../constantData/Slices/profileSlice";
+import { setProfiles, updateProfile } from "../../../constantData/Slices/profileSlice";
 import { useNavigate } from "react-router-dom";
 
-const ProfileForm = () => {
+const ProfileForm = ({setProfiler}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -90,7 +90,7 @@ const ProfileForm = () => {
       await update(ref(database, `users/${loggedInUserUID}`), cleanedProfile); // ✅ Updates the correct user
 
       console.log("✅ Profile updated successfully!");
-      navigate("/profile");
+      setProfiler("Main")
     } catch (error) {
       console.error("❌ Error updating profile:", error);
     }
@@ -179,9 +179,14 @@ const ProfileForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="w-full lg:w-3/4 max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden mt-5">
       {/* Background Image */}
+
       <div className="relative w-full h-48 bg-gray-300">
+        <button
+          onClick={() => setProfiler("Main")}
+          className="absolute top-2 bg-blue-300 p-2 z-50 cursor-pointer">Go Back</button>
+
         {updatedProfile.backgroundImg && (
           <img
             src={updatedProfile.backgroundImg}
