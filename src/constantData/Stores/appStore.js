@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {thunk} from "redux-thunk"; // ✅ Correct way to import
 import searchDataReducer from "../Slices/searchDataSlice";
 import meetRecordingReducer from "../Slices/meetRecordingSlice";
 import dsaReducer from "../Slices/dsaSlice";
@@ -7,6 +6,7 @@ import profileReducer from "../Slices/profileSlice";
 import meetSessionReducer from "../Slices/meetSessionSlice";
 import quizDataReducer from "../Slices/quizDataSlice";
 import connectionsReducer from "../Slices/connectionsSlice";
+import postReducer from "../Slices/postSlice";
 
 const appStore = configureStore({
     reducer: {
@@ -17,8 +17,9 @@ const appStore = configureStore({
         meetNow: meetSessionReducer,
         quizData: quizDataReducer,
         connection: connectionsReducer,
+        posts: postReducer
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 export default appStore;

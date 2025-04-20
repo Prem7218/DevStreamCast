@@ -63,7 +63,7 @@ const MapLibreSatellite = ({ location, onClose, setUploads, messageBox }) => {
   }, [mapStyle]);
 
   return (
-    <div className={`absolute  ${messageBox ? "w-[350px] h-[200px] top-[45%] right-0 " : "w-[600px] h-[400px] bottom-[10%] left-[30%]"} rounded-md shadow-md overflow-hidden`}>
+    <div className={`absolute  ${messageBox ? "w-[350px] h-[200px] top-[45%] left-2 " : "w-[600px] h-[400px] bottom-[10%] left-[30%]"} rounded-md shadow-md overflow-hidden`}>
       {/* Map Container */}
       <div ref={mapContainerRef} className="w-full h-full" />
 

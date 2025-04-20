@@ -23,6 +23,7 @@ import { useauthCheck } from "../../3_context/authContext";
 import BodyCardShimmer from "../../BodyCardShimmer";
 import { useOpenZustand } from "../../4_Zustand/useOpenZustand";
 import ApiSandbox from "./API/ApiSandbox";
+import PostFeed from "./profile_post/createPost/posts/PostFeed";
 
 const Body = () => {
   const loggedInUserUID = auth?.currentUser?.uid;
@@ -42,7 +43,8 @@ const Body = () => {
   const videos = useSelector((store) => store.meetRecording || []);
   const toggleConnections = () => setShowConnections(!showConnections);
   const searchRef = useRef(null);
-  const [page, setPage] = useState("Main");
+  const page = useOpenZustand((state) => state.page);
+  const setPage = useOpenZustand((state) => state.setPage);
 
   useEffect(() => {
     if (datas) setMainArticleData(datas);
@@ -224,9 +226,7 @@ const Body = () => {
         </div>
       )}
 
-      {page === "API" && (
-        <ApiSandbox />
-      )}
+      {page === "API" && <ApiSandbox />}
 
       <div className="fixed bottom-0 right-4 w-[95%] sm:w-[60%] md:w-[40%] lg:w-[30%] max-w-[400px]">
         {/* Chat Window */}
@@ -263,20 +263,27 @@ const Body = () => {
         )}
       </div>
 
-      {/* 🔹 Right Sidebar */}
-      {page === "Main" && (
-        <aside className="lg:w-[25%] md:w-[30%] sm:w-[35%] p-4 space-y-4 shadow-md border-l border-gray-200 h-fit">
-          {/* 🎥 Dev Meet Recordings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <DevMeetRecording videos={videos} />
-          </div>
-
-          {/* 📰 News Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <News />
-          </div>
-        </aside>
+      {page === "G_Post" && (
+        <div className="w-full lg:w-[55%] md:w-[50%] z-0">
+          {console.log("I am Go to PostFeed")}
+          <PostFeed />
+        </div>
       )}
+
+      {/* 🔹 Right Sidebar */}
+      {(page === "Main" || page === "G_Post") && (
+          <aside className="lg:w-[25%] md:w-[30%] sm:w-[35%] p-4 space-y-4 shadow-md border-l border-gray-200 h-fit">
+            {/* 🎥 Dev Meet Recordings */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <DevMeetRecording videos={videos} />
+            </div>
+
+            {/* 📰 News Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <News />
+            </div>
+          </aside>
+        )}
     </div>
   );
 };

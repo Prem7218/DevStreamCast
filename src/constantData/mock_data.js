@@ -1,5 +1,6 @@
 import { syntaxTree } from "@codemirror/language";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { getDatabase } from "firebase-admin/database";
 
 const GEMINI_API_KEY = process.env.THE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -725,3 +726,68 @@ function myCompletions(context) {
 }
 
 export { completeJSDoc, myCompletions };
+
+export async function analyzeCode(codeInput) {
+  const prompt = `
+You're a software expert that breaks down code into steps.
+
+Given this code:
+\`\`\`
+${codeInput}
+\`\`\`
+
+Generate a structured breakdown:
+1. Pseudocode
+2. Time and Space Complexity (Best, Average, Worst) with explanation
+3. Visual Steps (with array/pointer visualization or flowcharts)
+4. Summary Table (Sorted Input?, Use Case, etc.)
+
+Return JSON:
+{
+  pseudocode: "...",
+  timeComplexity: { Best: "...", Average: "...", Worst: "..." },
+  spaceComplexity: "...",
+  explanation: "...",
+  visualSteps: [ { description: "...", diagram: "...", pointers: {...} } ],
+  summary: { "Use Case": "...", ... }
+}
+`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text();
+
+  // Try to extract JSON from the text
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("Failed to extract JSON from Gemini response");
+
+  return JSON.parse(match[0]);
+}
+
+// export const deleteMediaFromFirebase = async (publicId) => {
+//   const db = getDatabase();
+//   const ref = db.ref("postMedia");
+//   const snapshot = await ref.once("value");
+
+//   const updates = {};
+
+//   snapshot.forEach((postSnap) => {
+//     const postId = postSnap.key;
+//     const postData = postSnap.val();
+
+//     if (postData.media) {
+//       Object.keys(postData.media).forEach((mediaKey) => {
+//         const mediaItem = postData.media[mediaKey];
+//         if (mediaItem.public_id === publicId) {
+//           updates[`/postMedia/${postId}/media/${mediaKey}`] = null;
+//         }
+//       });
+//     }
+//   });
+
+//   if (Object.keys(updates).length === 0) {
+//     return { deleted: false, message: "No matching public_id found in Firebase." };
+//   }
+
+//   await db.ref().update(updates);
+//   return { deleted: true, message: "Deleted media entry from Firebase", updates };
+// };

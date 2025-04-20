@@ -1,21 +1,67 @@
 @import "tailwindcss";
-  
+
 /* Split Container */
 .split {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 /* Default Gutter Styling */
 .gutter {
-    background-color: #eee; /* Light gray */
-    background-repeat: no-repeat;
-    background-position: 50%;
+  background-color: #eee; /* Light gray */
+  background-repeat: no-repeat;
+  background-position: 50%;
 }
 
 /* Horizontal Splitter Design */
 .gutter.gutter-horizontal {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
-    cursor: col-resize; /* Horizontal resizing cursor */
-    width: 8px; /* Adjust the gutter width */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+  cursor: col-resize; /* Horizontal resizing cursor */
+  width: 8px; /* Adjust the gutter width */
+}
+
+/* */
+
+/* Optional custom CSS if not using Tailwind */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-width: 32rem;
+  width: 100%;
+  position: relative;
+}
+
+.btn {
+  padding: 8px 12px;
+  margin-top: 10px;
+}
+
+.textarea,
+.select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.dropzone {
+  margin-top: 12px;
+  padding: 10px;
+  border: 2px dashed #aaa;
+  text-align: center;
+}
+.file-list {
+  list-style: none;
+  margin-top: 10px;
 }

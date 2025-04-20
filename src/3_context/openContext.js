@@ -16,6 +16,7 @@ export const OpenProvider = ({ children }) => {
     sleepanonomus: false,
   });
   const [showMap, setShowMap] = useState(false);
+  const [mediaFiles,setMediaFiles] = useState([]);
 
   return (
     <OpenContext.Provider
@@ -34,6 +35,8 @@ export const OpenProvider = ({ children }) => {
         setAnonomusChat,
         showMap,
         setShowMap,
+        mediaFiles,
+        setMediaFiles
       }}
     >
       {children}

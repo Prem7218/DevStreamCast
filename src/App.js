@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./2_component/1_header/Header";
 import Body from "./2_component/2_body/Body";
 import Footer from "./2_component/3_footer/Footer";
@@ -26,6 +26,7 @@ import appStore from "./constantData/Stores/appStore";
 import QuizResult from "./2_component/2_body/quiz/QuizResult";
 import PrivateMeetMe from "./2_component/2_body/meeting/PrivateMeetMe";
 import ApiSandbox from "./2_component/2_body/API/ApiSandbox";
+import PostFeed from "./2_component/2_body/profile_post/createPost/posts/PostFeed";
 
 const AppLayout = () => {
   return (
@@ -127,6 +128,10 @@ const AppRouter = createBrowserRouter([
       {
         path: "/api-testing",
         element: <ApiSandbox />
+      },
+      {
+        path: "/posts",
+        element: <PostFeed />
       }
     ],
     errorElement: <Error />,
@@ -135,11 +140,14 @@ const AppRouter = createBrowserRouter([
 
 export const App = () => <RouterProvider router={AppRouter} />;
 // export const App = () => {
+//   const [open, setOpen] = useState(false);
+
 //   return (
-//     <div className="min-h-screen bg-gray-50 py-10">
-//       <ApiSandbox />
+//     <div>
+//       <button onClick={() => setOpen(true)} className="btn open-post">+ Create Post</button>
+//       <CreatePostModal isOpen={open} onClose={() => setOpen(false)} />
 //     </div>
-//   );
-// };
+//   )
+// }
 
 export default App;

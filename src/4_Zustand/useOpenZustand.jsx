@@ -1,16 +1,26 @@
 import { create } from "zustand";
 
 export const useOpenZustand = create((set) => ({
+  post_username: "",
+  post_Profile: "",
   showConnections: false,
   showEmojiPicker1: false,
   showEmojiPicker2: false,
+  showEmojiPicker3: false,
   searchTerm1: "",
-  userChatId: 0, 
+  userChatId: 0,
   all_user: [],
+  page: "Main",
+  open: false,
+  setPostUsername: (value) => set({ post_username: value }),
+  setPostProfile: (value) => set({ post_Profile: value }),
   setShowConnections: (value) => set({ showConnections: value }),
   setShowEmojiPicker1: (value) => set({ showEmojiPicker1: value }),
   setShowEmojiPicker2: (value) => set({ showEmojiPicker2: value }),
+  setShowEmojiPicker3: (value) => set({ showEmojiPicker3: value }),
   setSearchTerm1: (value) => set({ searchTerm1: value }),
   setUserChatId: (value) => set({ userChatId: value }),
   setAllUsers: (value) => set({ all_user: value }),
+  setPage: (value) => set({ page: value }),
+  setOpen: (value) => set({ open: value }),
 }));

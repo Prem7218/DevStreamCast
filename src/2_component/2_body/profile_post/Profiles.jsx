@@ -8,18 +8,63 @@ import { auth, database } from "../../../constantData/firebase";
 import { fetchProfiles } from "../../../Authentications/login/profileFetcher";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileForm from "./ProfileForm";
+import CreatePostModal from "./createPost/CreaatePostModal";
+import PostFeed from "./createPost/posts/PostFeed";
+import {
+  setCurrentUserPost,
+  setError,
+} from "../../../constantData/Slices/postSlice";
+import { useOpenZustand } from "../../../4_Zustand/useOpenZustand";
+import { usePostUpdate } from "../../../4_Zustand/usePostUpdate";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { puid } = useParams();
+  const setPuid = usePostUpdate((state) => state.setPuid);
   const loggedInUserUID = puid || auth.currentUser?.uid;
+  const current = auth?.currentUser?.uid;
 
   useEffect(() => {
     if (!loggedInUserUID) {
       navigate("/authentication/1");
       return;
     }
+    setPuid(loggedInUserUID);
   }, []);
+
+  const setPostUsername = useOpenZustand((state) => state.setPostUsername);
+  const setPostProfile = useOpenZustand((state) => state.setPostProfile);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        // dispatch(setLoading(true));
+        const postsRef = ref(database, `users/${loggedInUserUID}/posts`);
+        const snapshot = await get(postsRef);
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const postsArray = Array.isArray(data)
+            ? data.filter(Boolean)
+            : Object.values(data);
+
+          postsArray.sort((a, b) => b.createdAt - a.createdAt);
+
+          console.log("Profile1: ", postsArray);
+          dispatch(setCurrentUserPost(postsArray));
+          console.log("Profile2: ", postsArray);
+        } else {
+          dispatch(setCurrentUserPost([]));
+        }
+      } catch (err) {
+        // dispatch(setError(err.message));
+      } finally {
+        // dispatch(setLoading(false));
+      }
+    };
+
+    fetchPosts();
+  }, [loggedInUserUID]);
 
   const meetNow = useSelector((store) => store.meetNow);
   const firstMeetingURL = meetNow?.meetingLink || null;
@@ -35,6 +80,7 @@ const Profile = () => {
   const videos = useSelector((store) => store.meetRecording || []);
   const mainst = auth.currentUser?.uid;
   const [profiler, setProfiler] = useState("Main");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     // Fetch user profiles from Redux store
@@ -46,7 +92,12 @@ const Profile = () => {
     const userRef = ref(database, `users/${loggedInUserUID}`);
     get(userRef).then((snapshot) => {
       if (snapshot.exists()) {
-        setUser(snapshot.val()); // Set user profile if it exists
+        setUser(snapshot.val());
+
+        if (user) {
+          setPostUsername(user.name);
+          setPostProfile(user.profilePic);
+        }
       } else {
         setUser(null); // No profile found
       }
@@ -217,14 +268,33 @@ const Profile = () => {
                   {user.connectionsCount || 0} connections
                 </button>
                 <br />
-                <button
-                  onClick={() => setProfiler("Edit")}
-                  className={`text-blue-600 font-semibold mt-2 cursor-pointer ${
-                    puid === loggedInUserUID ? "hidden" : "block"
-                  }`}
-                >
-                  Edit Profile
-                </button>
+
+                {puid !== loggedInUserUID && (
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setProfiler("Edit")}
+                      className="text-blue-600 font-semibold mt-2 hover:underline focus:outline-none transition cursor-pointer"
+                    >
+                      Edit Profile
+                    </button>
+
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setOpen(true)}
+                        className="px-4 py-1 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
+                      >
+                        + Create Post
+                      </button>
+
+                      <CreatePostModal
+                        isOpen={open}
+                        onClose={() => setOpen(false)}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {ConnListOpen && (
                   <Connections
@@ -260,6 +330,7 @@ const Profile = () => {
                   </button>
 
                   {/* Message Button */}
+
                   <button
                     className={`px-5 py-2 rounded-md font-medium transition-all duration-300 ${
                       followCheck
@@ -370,6 +441,10 @@ const Profile = () => {
               </p>
             </div>
 
+            <div className={`w-full border-t`}>
+              <PostFeed isProfile={true} loggedInUser={loggedInUserUID} puid={puid} />
+            </div>
+
             {/* Experience Section */}
             <div className="p-6 border-t">
               <h3 className="text-xl font-semibold">Experience</h3>
@@ -434,7 +509,9 @@ const Profile = () => {
               </div>
             </div>
           </div>
-        ) : <ProfileForm setProfiler={setProfiler} />}
+        ) : (
+          <ProfileForm setProfiler={setProfiler} />
+        )}
       </>
 
       <aside className="w-full lg:w-1/4 mt-5 space-y-6 lg:ml-5 overflow-auto">
