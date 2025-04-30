@@ -12,6 +12,7 @@ export const useOpenZustand = create((set) => ({
   all_user: [],
   page: "Main",
   open: false,
+  open1: false,
   setPostUsername: (value) => set({ post_username: value }),
   setPostProfile: (value) => set({ post_Profile: value }),
   setShowConnections: (value) => set({ showConnections: value }),
@@ -23,4 +24,5 @@ export const useOpenZustand = create((set) => ({
   setAllUsers: (value) => set({ all_user: value }),
   setPage: (value) => set({ page: value }),
   setOpen: (value) => set({ open: value }),
+  setOpen1: (value) => set({ open1: value }),
 }));

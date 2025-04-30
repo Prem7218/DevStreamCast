@@ -45,7 +45,7 @@ const Body = () => {
   const searchRef = useRef(null);
   const page = useOpenZustand((state) => state.page);
   const setPage = useOpenZustand((state) => state.setPage);
-
+ 
   useEffect(() => {
     if (datas) setMainArticleData(datas);
   }, [datas]);
@@ -265,8 +265,7 @@ const Body = () => {
 
       {page === "G_Post" && (
         <div className="w-full lg:w-[55%] md:w-[50%] z-0">
-          {console.log("I am Go to PostFeed")}
-          <PostFeed />
+          <PostFeed isBody={true} />
         </div>
       )}
 

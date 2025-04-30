@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
 export const usePostUpdate = create((set) => ({
-  text: "",
+  text1: "",
   privacy: "public",
-  mentions: [],
+  mentions1: [],
   puids: null,
   setPuid: (value) => set({puids: value}),
-  setText: (value) => set({ text: value }),
+  setText: (value) => set({ text1: String(value || '') }),
   setPrivacy: (value) => set({ privacy: value }),
-  setMentions: (value) => set({ mentions: value }),
+  setMentions1: (value) => set({ mentions1: value }),
 }));

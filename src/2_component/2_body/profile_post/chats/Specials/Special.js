@@ -8,7 +8,8 @@ export const Special = ({
   setShowEmojiPicker,
   showEmojiPicker,
   setNewMessage,
-  inCreatePost
+  inCreatePost,
+  postme
 }) => {
   const handleEmojiClick = (emojiObject) => {
     setNewMessage((prev) => prev + emojiObject.emoji); // Append selected emoji
@@ -17,11 +18,11 @@ export const Special = ({
 
   return (
     <>
-      <div className="relative">
+      <div className={`${postme && 'right-32'} relative`}>
         {/* 😊 Emoji Button */}
         <button
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className="p-2 bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer"
+          className={`p-2 bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer ${postme && 'relative left-32'}`}
         >
           <FiSmile size={22} />
         </button>

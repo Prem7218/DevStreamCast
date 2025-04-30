@@ -13,6 +13,7 @@ import PostFeed from "./createPost/posts/PostFeed";
 import {
   setCurrentUserPost,
   setError,
+  setPosts,
 } from "../../../constantData/Slices/postSlice";
 import { useOpenZustand } from "../../../4_Zustand/useOpenZustand";
 import { usePostUpdate } from "../../../4_Zustand/usePostUpdate";
@@ -29,6 +30,7 @@ const Profile = () => {
       navigate("/authentication/1");
       return;
     }
+
     setPuid(loggedInUserUID);
   }, []);
 
@@ -38,8 +40,10 @@ const Profile = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+  // Current user's posts
         // dispatch(setLoading(true));
         const postsRef = ref(database, `users/${loggedInUserUID}/posts`);
+        const postRef = ref(database, `users`);
         const snapshot = await get(postsRef);
 
         if (snapshot.exists()) {
@@ -50,16 +54,42 @@ const Profile = () => {
 
           postsArray.sort((a, b) => b.createdAt - a.createdAt);
 
-          console.log("Profile1: ", postsArray);
+          // console.log("Profile1: ", postsArray);
           dispatch(setCurrentUserPost(postsArray));
-          console.log("Profile2: ", postsArray);
+          // console.log("Profile2: ", postsArray);
         } else {
           dispatch(setCurrentUserPost([]));
         }
+
+  // ✅ Fetch all posts from all users
+  
+        const allUsersRef = ref(database, `users`);
+        const allSnapshot = await get(allUsersRef);
+
+        if (allSnapshot.exists()) {
+          const allData = allSnapshot.val();
+          let allPosts = [];
+
+          // Loop through each user's posts
+          Object.keys(allData).forEach((userId) => {
+            const userPosts = allData[userId]?.posts;
+            if (userPosts) {
+              const postList = Array.isArray(userPosts)
+                ? userPosts.filter(Boolean)
+                : Object.values(userPosts);
+              allPosts.push(...postList);
+            }
+          });
+
+          // Sort all posts by createdAt
+          allPosts.sort((a, b) => b.createdAt - a.createdAt);
+          dispatch(setPosts(allPosts)); 
+        } else {
+          dispatch(setPosts([]));
+        }
+
       } catch (err) {
-        // dispatch(setError(err.message));
-      } finally {
-        // dispatch(setLoading(false));
+        console.log("Error In Profile: ", err)
       }
     };
 
@@ -80,7 +110,8 @@ const Profile = () => {
   const videos = useSelector((store) => store.meetRecording || []);
   const mainst = auth.currentUser?.uid;
   const [profiler, setProfiler] = useState("Main");
-  const [open, setOpen] = useState(false);
+  const open1 = useOpenZustand((state) => state.open1);
+  const setOpen1 = useOpenZustand((state) => state.setOpen1);
 
   useEffect(() => {
     // Fetch user profiles from Redux store
@@ -282,15 +313,15 @@ const Profile = () => {
                     <div>
                       <button
                         type="button"
-                        onClick={() => setOpen(true)}
+                        onClick={() => setOpen1(true)}
                         className="px-4 py-1 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
                       >
                         + Create Post
-                      </button>
+                      </button> 
 
                       <CreatePostModal
-                        isOpen={open}
-                        onClose={() => setOpen(false)}
+                        isOpen={open1}
+                        onClose={() => setOpen1(false)}
                       />
                     </div>
                   </div>

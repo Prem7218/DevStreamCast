@@ -5,6 +5,7 @@ import { auth, database } from "../../../../constantData/firebase";
 import { useOpenZustand } from "../../../../4_Zustand/useOpenZustand";
 
 const PostPreview = ({
+  setTexts,
   text,
   mentions,
   mediaFiles,
@@ -12,6 +13,7 @@ const PostPreview = ({
   onRemoveFile,
   setMediaFiles,
   setMentions,
+  setMentions1,
   setShowAIActions,
   setShowEmojiPicker3,
   onClose,
@@ -48,8 +50,8 @@ const PostPreview = ({
         userId: loggedInUserUID,
         id,
         media: mediaFiles,
-        mentions
-      }
+        mentions,
+      };
 
       const postsRef = ref(database, `users/${loggedInUserUID}/posts`);
       const medRef = ref(database, `postMedia`);
@@ -62,9 +64,11 @@ const PostPreview = ({
       // Reset UI
       setMediaFiles([]);
       setMentions([]);
+      setMentions1([]);
       setShowAIActions(false);
       setShowEmojiPicker3(false);
       setShowPreview(false);
+      setTexts("");
       setText("");
       onClose();
     } catch (error) {
@@ -74,24 +78,33 @@ const PostPreview = ({
 
   return (
     <div className="w-full p-6 border border-gray-200 rounded-xl shadow-sm transition-all duration-300">
-      <h3 className="text-xl font-bold mb-3 text-gray-800 flex items-center gap-2">
-        🔍 Post Preview
-      </h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          🔍 Post Preview
+        </h3>
+
+        <button
+          onClick={handlePost}
+          className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:outline-none transition duration-300 ease-in-out cursor-pointer"
+        >
+          Post
+        </button>
+      </div>
 
       {/* Post Text */}
-      <div className="max-h-60 overflow-y-auto">
+      <div className="max-h-36 overflow-y-auto">
         <p className="text-base text-gray-700 whitespace-pre-line leading-relaxed">
           {text}
         </p>
       </div>
 
       {/* Mentions */}
-      {/* {mentions?.length > 0 && (
+      {mentions?.length > 0 && (
         <div className="mt-3 text-sm text-blue-600">
-          <strong className="text-gray-700">Mentions:</strong>{" "}
+          <strong className="text-gray-700 bg-blue-300">Mentions:</strong>{" "}
           {mentions.map((m) => `@${m}`).join(", ")}
         </div>
-      )} */}
+      )}
 
       {/* Media Preview */}
       {mediaFiles?.length > 0 && (
@@ -109,7 +122,7 @@ const PostPreview = ({
               return (
                 <div
                   key={i}
-                  className="relative group min-w-[250px] max-w-[300px] h-[100px] rounded-lg border border-gray-200 shadow hover:shadow-lg transition-shadow duration-300"
+                  className="relative group min-w-[250px] max-w-[300px] rounded-lg border border-gray-200 shadow hover:shadow-lg transition-shadow duration-300"
                 >
                   {type.startsWith("image") ? (
                     <img
@@ -118,10 +131,7 @@ const PostPreview = ({
                       className="w-full object-cover rounded-lg"
                     />
                   ) : (
-                    <video
-                      controls
-                      className="rounded-md object-cover w-full"
-                    >
+                    <video controls className="rounded-md object-cover w-full">
                       <source src={file.url} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
@@ -148,14 +158,14 @@ const PostPreview = ({
         <strong>Privacy:</strong> <span className="capitalize">{privacy}</span>
       </div>
 
-      <div className="flex justify-end mt-4">
+      {/* <div className="flex justify-end mt-4">
         <button
           onClick={handlePost}
           className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:outline-none transition duration-400 ease-in-out cursor-pointer"
         >
           Post
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

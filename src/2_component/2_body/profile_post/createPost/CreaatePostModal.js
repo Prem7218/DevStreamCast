@@ -4,7 +4,10 @@ import MediaUploader from "./MediaUploader";
 import MentionTaggingInput from "./MentionTaggingInput";
 import PrivacySelector from "./PrivacySelector";
 import { Special } from "../chats/Specials/Special";
-import { model } from "../../../../constantData/mock_data";
+import {
+  deleteMediaFromFirebase,
+  model,
+} from "../../../../constantData/mock_data";
 import { useOpenZustand } from "../../../../4_Zustand/useOpenZustand";
 import { OpenContext, useOpen } from "../../../../3_context/openContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,8 +19,9 @@ import { usePostUpdate } from "../../../../4_Zustand/usePostUpdate";
 
 const CreatePostModal = ({ isOpen, onClose }) => {
   const loggedInUserUID = auth?.currentUser?.uid;
-  const { text, privacy, mentions, setText, setMentions, setPrivacy } =
-    usePostUpdate();
+  const [text, setTexts] = useState("");
+  const [mentions, setMentions] = useState([]);
+  const { text1, privacy, mentions1, setMentions1, setText, setPrivacy } = usePostUpdate();
   const { mediaFiles, setMediaFiles } = useOpen();
   const [showPreview, setShowPreview] = useState(false);
   const [cursorPos, setCursorPos] = useState(0);
@@ -27,6 +31,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
   const { user, setUser } = useOpen();
   const userProfiles = useSelector((state) => state.profile.userProfiles);
   const dispatch = useDispatch();
+  const [dele1, setDele1] = useState(false);
 
   useEffect(() => {
     // Fetch user profiles from Redux store
@@ -45,6 +50,10 @@ const CreatePostModal = ({ isOpen, onClose }) => {
       setLoading1(false);
     });
   }, [loggedInUserUID, dispatch, userProfiles]);
+
+  useEffect(() => {
+    console.log("Media: ", mediaFiles.length);
+  }, [mediaFiles.length]);
 
   const textareaRef = useRef(null);
 
@@ -89,6 +98,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     try {
       const result = await model.generateContent(prompt);
       const response = await result.response.text();
+      setTexts(response);
       setText(response);
     } catch (error) {
       console.log("Gemini AI error:", error);
@@ -98,11 +108,15 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleRemoveFile = (index, fileId) => {
-    const updatedFiles = [...mediaFiles];
-    updatedFiles.splice(index, 1);
-    deleteFromCloudinary(fileId);
-    setMediaFiles(updatedFiles);
+  const handleRemoveFile = async (index, fileId) => {
+    setDele1(false);
+    await deleteFromCloudinary(fileId);
+
+    if (dele1) {
+      const updatedFiles = [...mediaFiles];
+      updatedFiles.splice(index, 1);
+      setMediaFiles(updatedFiles);
+    }
   };
 
   const deleteFromCloudinary = async (publicId) => {
@@ -116,15 +130,17 @@ const CreatePostModal = ({ isOpen, onClose }) => {
       });
 
       const result = await res.json();
-      console.log("DELETE RESULT:", result);
 
       if (result.success) {
+        const dele = await deleteMediaFromFirebase(publicId);
+        console.log("DELETE RESULT:", result, "\nFirebase: ", dele);
         alert("File deleted successfully!");
+        setDele1(true);
       } else {
         alert("Delete failed: " + (result.error || "Unknown reason"));
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.log("Fetch error:", error);
       alert("Network or Server error during deletion.");
     }
   };
@@ -142,6 +158,12 @@ const CreatePostModal = ({ isOpen, onClose }) => {
               onClose();
               setShowAIActions(false);
               setShowPreview(false);
+              setMediaFiles([]);
+              setMentions([]);
+              setMentions1([]);
+              setTexts("");
+              setText("");
+              onClose();
             }}
             className="text-gray-500 hover:text-red-500 transition text-sm cursor-pointer"
           >
@@ -152,26 +174,31 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         <PostTextArea
           setShowPreview={setShowPreview}
           value={text}
-          onChange={setText}
+          onChange={setTexts}
+          setText={setText}
           loading={loading}
           onCursorChange={setCursorPos}
           inputRef={textareaRef}
+          text1={text1}
         />
 
-        {/* <MentionTaggingInput
+        <MentionTaggingInput
           mentions={mentions}
+          mentions1={mentions1}
           setMentions={setMentions}
+          setMentions1={setMentions1}
           text={text}
           cursorPos={cursorPos}
-          setTextExternally={setText}
+          setTextExternally={setTexts}
+          setText={setText}
           connections={user?.connections || []}
-        /> */}
+        />
 
         <div className="flex justify-between items-center">
           <Special
             setShowEmojiPicker={setShowEmojiPicker3}
             showEmojiPicker={showEmojiPicker3}
-            setNewMessage={setText}
+            setNewMessage={setTexts}
             inCreatePost={true}
           />
 
@@ -209,13 +236,19 @@ const CreatePostModal = ({ isOpen, onClose }) => {
               onClose();
               setShowAIActions(false);
               setShowPreview(false);
+              setMediaFiles([]);
+              setMentions([]);
+              setMentions1([]);
+              setTexts("");
+              setText("")
+              onClose();
             }}
             className="cursor-pointer px-5 py-2.5 text-sm font-medium text-gray-800 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-200 ease-in-out"
           >
             Cancel
           </button>
           <button
-            disabled={text.trim().length === 0}
+            disabled={text.trim().length === 0 && text1.trim().length === 0}
             onClick={() => setShowPreview(!showPreview)}
             className={`px-5 py-2.5 text-sm font-medium text-white rounded-lg focus:outline-none transition duration-400 ease-in-out ${
               text.trim().length === 0
@@ -234,9 +267,11 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         >
           <PostPreview
             setShowPreview={setShowPreview}
-            setText={setText}
+            setText={setTexts}
+            setTexts={setText}
             setMediaFiles={setMediaFiles}
             setMentions={setMentions}
+            setMentions1={setMentions1}
             setShowEmojiPicker3={setShowEmojiPicker3}
             setShowAIActions={setShowAIActions}
             onClose={onClose}
@@ -245,6 +280,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
             mediaFiles={mediaFiles}
             privacy={privacy}
             onRemoveFile={handleRemoveFile}
+            user={user}
           />
         </div>
       )}

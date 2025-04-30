@@ -1,12 +1,13 @@
 import React from "react";
 
-const PostTextArea = ({ value, onChange, loading, onCursorChange, inputRef, setShowPreview }) => {
+const PostTextArea = ({ text1, setText, value, onChange, loading, onCursorChange, inputRef, setShowPreview }) => {
   const handleChange = (e) => {
 
     if(e.target.value.length === 0) {
       setShowPreview(false);
     }
     onChange(e.target.value);
+    setText(e.target.value);
     onCursorChange(e.target.selectionStart);
   };
   
@@ -26,7 +27,7 @@ const PostTextArea = ({ value, onChange, loading, onCursorChange, inputRef, setS
       className="w-full p-3 border rounded-md text-sm resize-none focus:outline-none focus:ring focus:border-blue-300 overflow-auto"
       placeholder="What do you want to talk about?"
       rows={5}
-      value={value}
+      value={text1 || value}
       onChange={handleChange}
     />
   );

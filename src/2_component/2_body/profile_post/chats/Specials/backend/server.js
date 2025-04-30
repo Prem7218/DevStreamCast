@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
-// import { deleteMediaFromFirebase } from "../../../../../../constantData/mock_data";
 
 dotenv.config();
 const app = express();
@@ -26,12 +25,10 @@ app.post("/delete", async (req, res) => {
 
   try {
     const cloudinaryResult = await cloudinary.uploader.destroy(publicId);
-    // const firebaseResult = await deleteMediaFromFirebase(publicId);
 
     res.json({
       success: true,
       cloudinary: cloudinaryResult,
-      // firebase: firebaseResult,
     });
   } catch (error) {
     console.error("Delete Error:", error);

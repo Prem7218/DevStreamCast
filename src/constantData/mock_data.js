@@ -1,6 +1,6 @@
 import { syntaxTree } from "@codemirror/language";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-// import { getDatabase } from "firebase-admin/database";
+import { getDatabase, ref, get, update, child } from "firebase/database";
 
 const GEMINI_API_KEY = process.env.THE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -763,31 +763,61 @@ Return JSON:
   return JSON.parse(match[0]);
 }
 
-// export const deleteMediaFromFirebase = async (publicId) => {
-//   const db = getDatabase();
-//   const ref = db.ref("postMedia");
-//   const snapshot = await ref.once("value");
+export const deleteMediaFromFirebase = async (publicId) => {
+  const db = getDatabase();
+  const dbRef = ref(db, "postMedia");
+  const snapshot = await get(dbRef);
 
-//   const updates = {};
+  const updates = {};
 
-//   snapshot.forEach((postSnap) => {
-//     const postId = postSnap.key;
-//     const postData = postSnap.val();
+  snapshot.forEach((postSnap) => {
+    const postId = postSnap.key;
+    const postData = postSnap.val();
 
-//     if (postData.media) {
-//       Object.keys(postData.media).forEach((mediaKey) => {
-//         const mediaItem = postData.media[mediaKey];
-//         if (mediaItem.public_id === publicId) {
-//           updates[`/postMedia/${postId}/media/${mediaKey}`] = null;
-//         }
-//       });
-//     }
-//   });
+    if (postData.media) {
+      const matchingMediaKeys = Object.keys(postData.media).filter((key) => {
+        const mediaItem = postData.media[key];
+        return mediaItem.public_id === publicId;
+      });
 
-//   if (Object.keys(updates).length === 0) {
-//     return { deleted: false, message: "No matching public_id found in Firebase." };
-//   }
+      if (matchingMediaKeys.length > 0) {
+        // Step 1: Delete the matching media items
+        matchingMediaKeys.forEach((key) => {
+          updates[`postMedia/${postId}/media/${key}`] = null;
+        });
 
-//   await db.ref().update(updates);
-//   return { deleted: true, message: "Deleted media entry from Firebase", updates };
-// };
+        // Step 2: If after deletion media would be empty, delete media object too
+        const mediaKeysCount = Object.keys(postData.media).length;
+        if (mediaKeysCount === matchingMediaKeys.length) {
+          updates[`postMedia/${postId}/media`] = null;
+        }
+
+        // Step 3: Optional — Clean whole postMedia/<postId> if fully empty
+        const onlyHasIdAndUser =
+          Object.keys(postData).length <= 3 &&
+          postData.id &&
+          postData.userId &&
+          mediaKeysCount === matchingMediaKeys.length;
+
+        if (onlyHasIdAndUser) {
+          updates[`postMedia/${postId}`] = null;
+        }
+      }
+    }
+  });
+
+  if (Object.keys(updates).length === 0) {
+    return {
+      deleted: false,
+      message: "No matching public_id found in Firebase.",
+    };
+  }
+
+  await update(ref(db), updates);
+
+  return {
+    deleted: true,
+    message: "✅ Media and any empty parents deleted successfully.",
+    updates,
+  };
+};

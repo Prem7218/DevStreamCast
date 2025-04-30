@@ -7,12 +7,17 @@ import { onValue, ref } from "firebase/database";
 import { auth, database } from "../../../../../constantData/firebase";
 import { usePostUpdate } from "../../../../../4_Zustand/usePostUpdate";
 import { useOpen } from "../../../../../3_context/openContext";
+import PostOptions from "./postFeedOption";
+import PostInteraction from "../share/postIntegration";
 
-const PostFeed = ({ isProfile }) => {
+const PostFeed = ({ isProfile, isBody }) => {
   const puids = usePostUpdate((state) => state.puids);
-  const loggedInUserId =  puids;
-  const posts = useSelector((store) => store.posts.currentUserPost);
+  const loggedInUserId = puids;
+  const posts = useSelector((store) =>
+    isBody ? store.posts.allPosts : store.posts.currentUserPost
+  );
   const [mediaMap, setMediaMap] = useState([]);
+  const [userIds, setUserIds] = useState({});
 
   useEffect(() => {
     if (!loggedInUserId) return;
@@ -21,22 +26,52 @@ const PostFeed = ({ isProfile }) => {
 
     const unsubscribe = onValue(mediaRef, (snapshot) => {
       const data = snapshot.val() || {};
+      let filtered;
 
-      const filtered = Object.values(data)
-        .filter((entry) => entry.userId === loggedInUserId)
-        .reduce((acc, entry) => {
-          acc[entry.id] = entry.media || [];
+      if (isBody) {
+        filtered = Object.keys(data).reduce((acc, userId) => {
+          const userPosts = data[userId];
+
+          if (userPosts && Array.isArray(userPosts.media)) {
+            userPosts.media.forEach((entry) => {
+              const postId = userPosts.id;
+
+              if (!acc[postId]) {
+                acc[postId] = [];
+              }
+
+              acc[postId].push(entry);
+              setUserIds((prev) => ({
+                ...prev,
+                [postId]: userPosts?.userId,
+              }));
+            });
+          }
+
           return acc;
         }, {});
+      } else {
+        filtered = Object.values(data)
+          .filter((entry) => entry.userId === loggedInUserId)
+          .reduce((acc, entry) => {
+            acc[entry.id] = entry.media || [];
+            return acc;
+          }, {});
+      }
 
       setMediaMap(filtered);
-      console.log(mediaMap)
     });
 
     return () => unsubscribe();
   }, [loggedInUserId]);
 
-  const findMediaByPostId = (postId) => mediaMap[postId] || [];
+  const findMediaByPostId = (postId) => {
+    return mediaMap[postId] || [];
+  };
+
+  const logIdByPostId = (postId) => {
+    return userIds[postId] || [];
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
@@ -55,6 +90,7 @@ const PostFeed = ({ isProfile }) => {
                 isProfile={isProfile}
                 postMedia={findMediaByPostId(post.id)}
                 mediaman={mediaMap[post.id]}
+                loggedInUserId={logIdByPostId(post.id)}
               />
             ))
           ) : (
@@ -64,6 +100,7 @@ const PostFeed = ({ isProfile }) => {
               isProfile={isProfile}
               postMedia={findMediaByPostId(posts[0].id)}
               mediaman={mediaMap[posts[0].id]}
+              loggedInUserId={logIdByPostId(posts[0].id)}
             />
           )}
         </>
@@ -72,17 +109,22 @@ const PostFeed = ({ isProfile }) => {
   );
 };
 
-const PostCard = ({ post, isProfile, postMedia = [], mediaman }) => {
+const PostCard = ({
+  post,
+  isProfile,
+  postMedia = [],
+  mediaman,
+  loggedInUserId,
+}) => {
   const setPage = useOpenZustand((state) => state.setPage);
   const navigate = useNavigate();
   const [showFullText, setShowFullText] = useState(false);
   const MAX_CHARS = 300;
   const [loading, setLoading] = useState(true);
-  const {
-    setText,
-    // setMentions,
-  } = usePostUpdate();
+  const [shareCheck, setShareCheck] = useState(false);
+  const { setText, setMentions1 } = usePostUpdate();
   const { setMediaFiles } = useOpen();
+  const setOpen1 = useOpenZustand((state) => state.setOpen1);
   const setOpen = useOpenZustand((state) => state.setOpen);
 
   const toggleText = () => setShowFullText((prev) => !prev);
@@ -116,16 +158,20 @@ const PostCard = ({ post, isProfile, postMedia = [], mediaman }) => {
         <div className="flex gap-3">
           {post?.profile ? (
             <img
+              onClick={() => navigate(`/profile/${loggedInUserId}`)}
               src={post.profile}
               alt="profile"
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-10 h-10 rounded-full object-cover cursor-pointer"
             />
           ) : (
             <div className="w-10 h-10 bg-gray-300 rounded-full" />
           )}
 
           <div className="flex flex-col justify-center">
-            <p className="font-semibold text-gray-800 leading-snug">
+            <p
+              onClick={() => navigate(`/profile/${loggedInUserId}`)}
+              className="font-semibold text-gray-800 leading-snug cursor-pointer"
+            >
               👤 {post.user || "New User"}
             </p>
             <p className="text-xs text-gray-400 mt-0.5 leading-tight">
@@ -136,17 +182,17 @@ const PostCard = ({ post, isProfile, postMedia = [], mediaman }) => {
 
         {/* RIGHT SIDE - 3 Dot Menu */}
         <div>
-          <button
-            onClick={() => {
-              setText(displayedText);
-              setMediaFiles(mediaman);
-              setOpen(true);
-            }}
-            title="Post Options"
-            className="text-gray-500 hover:text-gray-700 text-xl px-2 cursor-pointer"
-          >
-            &#8942;
-          </button>
+          <PostOptions
+            setMentions1={setMentions1}
+            setText={setText}
+            setMediaFiles={setMediaFiles}
+            setOpen={setOpen}
+            setOpen1={setOpen1}
+            displayedText={post.text}
+            mediaman={postMedia}
+            isProfile={isProfile}
+            mentions={postMedia?.mentions}
+          />
         </div>
       </div>
 
@@ -162,7 +208,7 @@ const PostCard = ({ post, isProfile, postMedia = [], mediaman }) => {
           </button>
         )}
       </div>
-
+      {/* {console.log("POSTMEDIA: ", postMedia)} */}
       {/* Media Preview */}
       {postMedia.length > 0 && (
         <div className="flex overflow-x-auto space-x-4 mt-4 pb-2">
@@ -201,18 +247,21 @@ const PostCard = ({ post, isProfile, postMedia = [], mediaman }) => {
         </div>
       )}
 
+      {postMedia?.mentions?.length > 0 && (
+        <div className="mt-3 text-sm text-blue-600 min-w-max">
+          <strong className="text-gray-700 bg-blue-300 px-2 py-1 rounded mr-2">
+            Mentions:
+          </strong>
+          {postMedia?.mentions.map((m) => (
+            <span key={m} className="mr-2">
+              @{m}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Stats Section */}
-      <div className="flex gap-6 text-gray-500 text-sm mt-4">
-        <span className="hover:text-blue-600 cursor-pointer">
-          👍 {post.likes || 0} Likes
-        </span>
-        <span className="hover:text-blue-600 cursor-pointer">
-          🔁 {post.shares || 0} Shares
-        </span>
-        <span className="hover:text-blue-600 cursor-pointer">
-          💬 {post.comments?.length || 0} Comments
-        </span>
-      </div>
+      <PostInteraction post={post} loggedInUserId={loggedInUserId} />
 
       {isProfile && (
         <div className="flex justify-end text-black">
